@@ -81,12 +81,10 @@ final class Main {
 	 */
 	public static void main(String[] args) throws Exception {
 		Dictionnaire A = new Dictionnaire(dataFile);
-		Index B = new Index("pso", A, dataFile);
-
-		Index C = new Index("pos", A, dataFile);
 		System.out.println(A);
 
-		System.out.println(A.getKeyByValue("\"2351480\""));
+		Index B = new Index("pso", A, dataFile);
+		Index C = new Index("pos", A, dataFile);
 
 		// parseQueries();
 	}
