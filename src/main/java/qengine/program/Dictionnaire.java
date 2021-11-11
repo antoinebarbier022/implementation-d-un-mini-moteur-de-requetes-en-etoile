@@ -14,11 +14,13 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Dictionnaire {
 
     // Dictionnaire
-    static HashMap<Integer, String> dico;
+    public HashMap<Integer, String> dico;
 
     /**
      * Construction d'un dictionnaire
@@ -38,9 +40,22 @@ public class Dictionnaire {
     }
 
     /**
+     * Recupération de la clef en fonction de la valeur
+     * 
+     */
+    public Integer getKeyByValue(String value) {
+        for (Map.Entry<Integer, String> entry : this.dico.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Traite chaque triple lu dans {@link #dataFile} avec {@link MainRDFHandler}.
      */
-    private static void parseData(String dataFile, String baseURI) throws FileNotFoundException, IOException {
+    private void parseData(String dataFile, String baseURI) throws FileNotFoundException, IOException {
 
         try (Reader dataReader = new FileReader(dataFile)) {
             // On va parser des données au format ntriples
