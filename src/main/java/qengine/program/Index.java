@@ -17,15 +17,6 @@ import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
 public class Index {
 
-    // On définie l'ordre
-    /*
-     * public static final int[] spo = { 0, 1, 2 }; // subject, predicate, object
-     * public static final int[] sop = { 0, 2, 1 }; // subject, object, predicate
-     * public static final int[] pso = { 1, 0, 2 }; // predicate, subject, object
-     * public static final int[] pos = { 1, 2, 0 }; // predicate, object, subject
-     * public static final int[] osp = { 2, 0, 1 }; // object, subject, predicate
-     * public static final int[] ops = { 2, 1, 0 }; // object, predicate, subject
-     */
     // L'ordre choisie pour cet index
     private String order;
     // private int[] order;
@@ -98,11 +89,4 @@ public class Index {
         }
 
     }
-
-    // On récupère l'ordre en fonction de l'index définie
-    /*
-     * private int[] stringToOrder(String str) { switch (str) { case "spo": return
-     * spo; case "sop": return sop; case "pso": return pso; case "pos": return pos;
-     * case "osp": return osp; case "ops": return ops; default: return spo; } }
-     */
 }
