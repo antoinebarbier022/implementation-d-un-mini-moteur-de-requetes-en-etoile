@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -38,11 +39,11 @@ public class Index {
     // Constructeur
     public Index(String typeIndex, Dictionnaire dic, String dataFile) throws FileNotFoundException, IOException {
         this.order = typeIndex;
-        // this.order = stringToOrder(typeIndex);
-
         this.dictionnaire = dic;
         index = new ArrayList<Triplet>();
         makeIndex(dataFile, null);
+        // On trie l'index
+        Collections.sort(index);
     }
 
     private void makeIndex(String dataFile, String baseURI) throws FileNotFoundException, IOException {
@@ -69,27 +70,21 @@ public class Index {
                     switch (order) {
                     case "spo":
                         index.add(new Triplet(s, p, o, st));
-                        System.out.println(order + "(" + s + "." + p + "." + o + ") = \t" + st);
                         break;
                     case "sop":
-                        System.out.println(order + "(" + s + "." + o + "." + p + ") = \t" + st);
                         index.add(new Triplet(s, o, p, st));
                         break;
                     case "pso":
-                        System.out.println(order + "(" + p + "." + s + "." + o + ") = \t" + st);
                         index.add(new Triplet(p, s, o, st));
                         break;
                     case "pos":
-                        System.out.println(order + "(" + p + "." + o + "." + s + ") = \t" + st);
                         index.add(new Triplet(p, o, s, st));
                         break;
                     case "osp":
-                        System.out.println(order + "(" + o + "." + s + "." + p + ") = \t" + st);
                         index.add(new Triplet(o, s, p, st));
                         break;
                     case "ops":
-                        System.out.println(order + "(" + o + "." + p + "." + s + ") = \t" + st);
-                        index.add(new Triplet(o, p, s, st)); 
+                        index.add(new Triplet(o, p, s, st));
                         break;
                     default:
                         throw new Exception("Erreur : le type d'index est incorrect");

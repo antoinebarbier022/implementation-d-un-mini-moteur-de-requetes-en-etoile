@@ -83,9 +83,17 @@ final class Main {
 		Dictionnaire A = new Dictionnaire(dataFile);
 		System.out.println(A);
 
+		System.out.println("pso");
 		Index B = new Index("pso", A, dataFile);
-		Index C = new Index("pos", A, dataFile);
+		for (Triplet tr : B.index) {
+			System.out.println(tr);
+		}
 
+		System.out.println("pos");
+		Index C = new Index("pos", A, dataFile);
+		for (Triplet tr : C.index) {
+			System.out.println(tr);
+		}
 		// parseQueries();
 	}
 
