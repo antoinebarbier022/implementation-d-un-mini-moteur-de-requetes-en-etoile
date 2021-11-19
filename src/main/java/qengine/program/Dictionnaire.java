@@ -13,14 +13,13 @@ import org.eclipse.rdf4j.rio.RDFParser;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class Dictionnaire {
 
     // Dictionnaire
-    public HashMap<Integer, String> dico;
+    public BiMap<Integer, String> dico;
 
     /**
      * Construction d'un dictionnaire
@@ -30,7 +29,12 @@ public class Dictionnaire {
      * @throws FileNotFoundException
      */
     public Dictionnaire(String file) throws FileNotFoundException, IOException {
-        dico = new HashMap<Integer, String>();
+        // 1ere version du dico : utilisation d'1 HashMap
+        // dico = new HashMap<Integer, String>();
+
+        // 2eme version du dico : utilisation de BiMap pour accéder à la clef et la
+        // valeur avec une meilleur complexité
+        dico = HashBiMap.create();
         parseData(file, null);
     }
 
@@ -40,17 +44,15 @@ public class Dictionnaire {
     }
 
     /**
-     * Recupération de la clef en fonction de la valeur
+     * Recupération de la clef en fonction de la valeur (fonction que l'on utilisait
+     * dans la première version du dictionnaire: avec un unique dictionnaire)
+     * Problème : complexiter dans la recherche KeyValue
      * 
+     * 
+     * public Integer getKeyByValue(String value) { for (Map.Entry<Integer, String>
+     * entry : this.dico.entrySet()) { if (Objects.equals(value, entry.getValue()))
+     * { return entry.getKey(); } } return null; }
      */
-    public Integer getKeyByValue(String value) {
-        for (Map.Entry<Integer, String> entry : this.dico.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
 
     /**
      * Traite chaque triple lu dans {@link #dataFile} avec {@link MainRDFHandler}.

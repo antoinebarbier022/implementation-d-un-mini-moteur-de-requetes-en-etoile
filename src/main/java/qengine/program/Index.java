@@ -54,9 +54,9 @@ public class Index {
 
             int s, p, o;
             for (Statement st : model) {
-                s = dictionnaire.getKeyByValue(st.getSubject().toString());
-                p = dictionnaire.getKeyByValue(st.getPredicate().getLocalName());
-                o = dictionnaire.getKeyByValue(st.getObject().toString());
+                s = dictionnaire.dico.inverse().get(st.getSubject().toString());
+                p = dictionnaire.dico.inverse().get(st.getPredicate().getLocalName());
+                o = dictionnaire.dico.inverse().get(st.getObject().toString());
                 try {
                     switch (order) {
                     case "spo":
