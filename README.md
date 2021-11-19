@@ -4,3 +4,13 @@ Groupe : Antoine Barbier et Djamel Benameur
 
 Git : https://gitlab.com/An_toine/implementation-d-un-mini-moteur-de-requetes-en-etoile/
 
+
+
+
+Pour lancer le programme, suivre les étapes suivantes:
+
++ VsCode : Modifier le fichier ```.vscode/launch.json```, placer les options dans "args" comme dans l'exemple suivant : 
+    ```
+    "args": "data/sample_query.queryset data/sample_data.nt output/output.txt"
+    ```
++ Eclipse : 

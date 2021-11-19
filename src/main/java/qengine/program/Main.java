@@ -37,20 +37,14 @@ import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 final class Main {
 	static final String baseURI = null;
 
-	/**
-	 * Votre répertoire de travail où vont se trouver les fichiers à lire
-	 */
-	static final String workingDir = "data/";
-
-	/**
-	 * Fichier contenant les requêtes sparql
-	 */
-	static final String queryFile = workingDir + "sample_query.queryset";
-
-	/**
-	 * Fichier contenant des données rdf
-	 */
-	static final String dataFile = workingDir + "sample_data.nt";
+	// Votre répertoire de travail où vont se trouver les fichiers à lire
+	// static final String workingDir = "data/";
+	// Fichier contenant les requêtes sparql
+	static String queryFile = "";// workingDir + "sample_query.queryset";
+	// Fichier contenant des données rdf
+	static String dataFile = ""; // workingDir + "sample_data.nt";
+	// Fichier contenant le resultat
+	static String resultFile = "";
 
 	// ========================================================================
 
@@ -80,6 +74,16 @@ final class Main {
 	 * Entrée du programme
 	 */
 	public static void main(String[] args) throws Exception {
+
+		if (args.length < 3) {
+			throw new Exception(
+					"Erreur : Vous devez saisir les options de la façon suivante : qengine <queryFile> <dataFile> <restultFile> ");
+		} else {
+			queryFile = args[0];
+			dataFile = args[1];
+			resultFile = args[2];
+		}
+
 		Dictionnaire A = new Dictionnaire(dataFile);
 		System.out.println(A);
 
