@@ -7,22 +7,7 @@ public class Index {
     // Temporaire : j'ai mis un ennumeration mais on peut améliorer ca 
     // 0 pour Subject, 1 pour Predicat, 2 pour objet  
     
-    public enum Triplet{
-        SPO(0,1,2),
-        SOP(0,2,1),
-        PSO(1,0,2),
-        OSP(1,2,0),
-        POS(2,0,1),
-        OPS(2,1,0);
-        
-    public int S,P,O;     
-    
-    Triplet(int S, int P, int O ){
-        this.S=S;
-        this.P=P;
-        this.O=O;
-    }
-    }
+  
 
     // une map avec trois élements qui sont des entiers 
     private final Map<Integer, Map<Integer, List<Integer>>> indexe;
