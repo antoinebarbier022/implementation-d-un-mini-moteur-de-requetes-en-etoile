@@ -64,6 +64,16 @@ final class Main {
 
 	static String output = "output/";
 
+	
+	/**
+	 * Entrée du programme
+	 */
+	public static void main(String[] args) throws Exception {
+		
+	}
+
+
+
 	// ========================================================================
 
 	/**
@@ -91,12 +101,6 @@ final class Main {
 		return output;
 	}
 
-	/**
-	 * Entrée du programme
-	 */
-	public static void main(String[] args) throws Exception {
-		
-	}
 
 	// ========================================================================
 
@@ -141,5 +145,23 @@ final class Main {
 		}
 		return requetes;
 	}
+
+	/**
+	 * Traite chaque triple lu dans {@link #dataFile} avec {@link MainRDFHandler}.
+	 */
+	private static void parseData() throws FileNotFoundException, IOException {
+
+		try (Reader dataReader = new FileReader(dataFile)) {
+			// On va parser des données au format ntriples
+			RDFParser rdfParser = Rio.createParser(RDFFormat.NTRIPLES);
+			
+			// On utilise notre implémentation de handler
+			rdfParser.setRDFHandler(new MainRDFHandler());
+
+			// Parsing et traitement de chaque triple par le handler
+			rdfParser.parse(dataReader, baseURI);
+			
+		
+			
 
 }
