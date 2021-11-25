@@ -1,19 +1,27 @@
 package qengine.program;
 
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 import org.eclipse.rdf4j.query.algebra.Projection;
 import org.eclipse.rdf4j.query.algebra.StatementPattern;
+import org.eclipse.rdf4j.query.algebra.Var;
 import org.eclipse.rdf4j.query.algebra.helpers.AbstractQueryModelVisitor;
 import org.eclipse.rdf4j.query.algebra.helpers.StatementPatternCollector;
 import org.eclipse.rdf4j.query.parser.ParsedQuery;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.Rio;
 
 /**
  * Programme simple lisant un fichier de requête et un fichier de données.
@@ -54,49 +62,40 @@ final class Main {
 	 */
 	static final String dataFile = workingDir + "sample_data.nt";
 
+	static String output = "output/";
+
 	// ========================================================================
 
 	/**
 	 * Méthode utilisée ici lors du parsing de requête sparql pour agir sur l'objet
 	 * obtenu.
 	 */
-	public static void processAQuery(ParsedQuery query) {
+	public static Query processAQuery(ParsedQuery query, Query output) {
 		List<StatementPattern> patterns = StatementPatternCollector.process(query.getTupleExpr());
 
-		System.out.println("first pattern : " + patterns.get(0));
+		for(StatementPattern p : patterns){
+			ArrayList<String> pattern = new ArrayList<>();
+			for(Var v :p.getVarList()){
+				if(v.getValue()==null)
+					pattern.add("?");
+				else 
+					pattern.add(v.getValue().toString());
 
-		System.out.println("object of the first pattern : " + patterns.get(0).getObjectVar().getValue());
-
-		System.out.println("variables to project : ");
-
-		// Utilisation d'une classe anonyme
-		query.getTupleExpr().visit(new AbstractQueryModelVisitor<RuntimeException>() {
-
-			public void meet(Projection projection) {
-				System.out.println(projection.getProjectionElemList().getElements());
 			}
-		});
+			output.getQuery().add(new Select(pattern.get(0), pattern.get(1), pattern.get(3)));
+
+		}
+		
+
+
+		return output;
 	}
 
 	/**
 	 * Entrée du programme
 	 */
 	public static void main(String[] args) throws Exception {
-		Dictionnaire A = new Dictionnaire(dataFile);
-		System.out.println(A);
-
-		System.out.println("pso");
-		Index B = new Index("pso", A, dataFile);
-		for (Triplet tr : B.index) {
-			System.out.println(tr);
-		}
-
-		System.out.println("pos");
-		Index C = new Index("pos", A, dataFile);
-		for (Triplet tr : C.index) {
-			System.out.println(tr);
-		}
-		// parseQueries();
+		
 	}
 
 	// ========================================================================
@@ -105,7 +104,7 @@ final class Main {
 	 * Traite chaque requête lue dans {@link #queryFile} avec
 	 * {@link #processAQuery(ParsedQuery)}.
 	 */
-	private static void parseQueries() throws FileNotFoundException, IOException {
+	private static ArrayList<Query> parseQueries() throws FileNotFoundException, IOException {
 		/**
 		 * Try-with-resources
 		 * 
@@ -116,6 +115,8 @@ final class Main {
 		 * On utilise un stream pour lire les lignes une par une, sans avoir à toutes
 		 * les stocker entièrement dans une collection.
 		 */
+
+		 ArrayList<Query> requetes = new ArrayList<Query>();
 		try (Stream<String> lineStream = Files.lines(Paths.get(queryFile))) {
 			SPARQLParser sparqlParser = new SPARQLParser();
 			Iterator<String> lineIterator = lineStream.iterator();
@@ -132,13 +133,13 @@ final class Main {
 
 				if (line.trim().endsWith("}")) {
 					ParsedQuery query = sparqlParser.parseQuery(queryString.toString(), baseURI);
-
-					processAQuery(query); // Traitement de la requête, à adapter/réécrire pour votre programme
-
+					Query req = new Query(queryString.toString().trim().replace("\t", ""));
+					requetes.add(processAQuery(query, req)); // Traitement de la requête, à adapter/réécrire pour votre programme
 					queryString.setLength(0); // Reset le buffer de la requête en chaine vide
 				}
 			}
 		}
+		return requetes;
 	}
 
 }
