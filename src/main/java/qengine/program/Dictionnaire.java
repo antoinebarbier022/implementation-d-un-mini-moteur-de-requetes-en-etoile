@@ -1,27 +1,29 @@
 package qengine.program;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.impl.LinkedHashModel;
-import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFParser;
-import org.eclipse.rdf4j.rio.Rio;
-import org.eclipse.rdf4j.rio.helpers.StatementCollector;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+
 
 public class Dictionnaire {
 
     // Dictionnaire
-    public HashMap<Integer, String> dico;
+    
+    // map1 avec premier élément un string puis un entier
+    private final Map<String, Integer> map1; 
+    
+    // map2 avec premier élément un entier puis un string
+    private final Map<Integer, String> map2; 
 
+    // Un compteur
+    private int compteur;
+
+    // crée une instance de notre dictionnaire 
+    private static Dictionnaire inst;
+        
+    
+    
     /**
      * Construction d'un dictionnaire
      * 
@@ -29,69 +31,81 @@ public class Dictionnaire {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public Dictionnaire(String file) throws FileNotFoundException, IOException {
-        dico = new HashMap<Integer, String>();
-        parseData(file, null);
+    
+    
+    public Dictionnaire(){
+        map1 = new HashMap<>();
+        map2 = new HashMap<>();
+        compteur = 1; 
+    }
+
+
+    /**
+     * Création d'une instance @Dictionnaire      
+     ** 
+     */
+
+    public static Dictionnaire getInstance(){
+        if(inst == null){
+            inst = new Dictionnaire();
+        } 
+        return inst;
+    }
+    
+    /**
+     * Recupération de la valeur      
+     ** 
+     */
+    
+    
+    public int get(String value) throws NullPointerException {
+        return map1.get(value);
+    }
+    
+    /**
+     * Recupération de la clef      
+     ** 
+     */
+    
+    public String get(int index) throws NullPointerException {
+        return map2.get(index);
+    }
+
+     /**
+     * ajouter la valeur à map1 si il contient pas de valeur et on augmente le compteur      
+     ** 
+     */
+
+    public void add(String... values) {
+        for(String value : values) {
+            if(!map1.containsKey(value)) {
+                map1.put(value, compteur);
+                map2.put(compteur, value);
+                compteur++;
+            }
+        }
     }
 
     @Override
-    public String toString() {
-        return "\nDictionnaire : \n" + dico.toString().replace(" ", "\n").replace("=", " : ") + "\n";
-    }
-
-    /**
-     * Recupération de la clef en fonction de la valeur
-     * 
-     */
-    public Integer getKeyByValue(String value) {
-        for (Map.Entry<Integer, String> entry : this.dico.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Traite chaque triple lu dans {@link #dataFile} avec {@link MainRDFHandler}.
-     */
-    private void parseData(String dataFile, String baseURI) throws FileNotFoundException, IOException {
-
-        try (Reader dataReader = new FileReader(dataFile)) {
-            // On va parser des données au format ntriples
-            RDFParser rdfParser = Rio.createParser(RDFFormat.NTRIPLES);
-
-            // On utilise notre implémentation de handler
-            rdfParser.setRDFHandler(new MainRDFHandler());
-
-            Model model = new LinkedHashModel();
-            rdfParser.setRDFHandler(new StatementCollector(model));
-
-            // Parsing et traitement de chaque triple par le handler
-            rdfParser.parse(dataReader, baseURI);
-
-            int key = 0;
-            for (Statement st : model) {
-                // Si subject de la data est déjà présente dans le dictionnaire, on ne le
-                // rajoute pas
-                if (!dico.containsValue(st.getSubject().toString())) {
-                    dico.put(key++, st.getSubject().toString());
-                }
-
-                // Si predicate de la data est déjà présente dans le dictionnaire, on ne le
-                // rajoute pas
-                if (!dico.containsValue(st.getPredicate().getLocalName())) {
-                    dico.put(key++, st.getPredicate().getLocalName());
-                }
-
-                // Si object de la data est déjà présente dans le dictionnaire, on ne le rajoute
-                // pas
-                if (!dico.containsValue(st.getObject().toString())) {
-                    dico.put(key++, st.getObject().toString());
-                }
-            }
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        for(Map.Entry<String, Integer> entry : map1.entrySet()) {
+            builder.append(" ")
+                .append(entry.getKey())
+                .append(":")
+                .append(entry.getValue())
+                .append(" \n");
+                
         }
 
+    return builder.toString(); 
+
+
+
     }
 
+
+
+
+   
 }

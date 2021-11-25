@@ -34,6 +34,8 @@ import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
  * 
  * @author Olivier Rodriguez <olivier.rodriguez1@umontpellier.fr>
  */
+
+
 final class Main {
 	static final String baseURI = null;
 
