@@ -90,9 +90,8 @@ public class Dictionnaire {
     public String toString(){
         StringBuilder builder = new StringBuilder();
         for(Map.Entry<String, Integer> entry : map1.entrySet()) {
-            builder.append(" ")
-                .append(entry.getKey())
-                .append(":")
+            builder.append(entry.getKey())
+                .append(" : ")
                 .append(entry.getValue())
                 .append(" \n");
                 

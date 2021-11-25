@@ -1,92 +1,112 @@
 package qengine.program;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.impl.LinkedHashModel;
-import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFParser;
-import org.eclipse.rdf4j.rio.Rio;
-import org.eclipse.rdf4j.rio.helpers.StatementCollector;
+import java.util.*; 
 
 public class Index {
-
-    // L'ordre choisie pour cet index
-    private String order;
-    // private int[] order;
-
-    // Index
-    public ArrayList<Triplet> index;
-
-    // Dictionnaire
-    private Dictionnaire dictionnaire;
-
-    // Constructeur
-    public Index(String typeIndex, Dictionnaire dic, String dataFile) throws FileNotFoundException, IOException {
-        this.order = typeIndex;
-        this.dictionnaire = dic;
-        index = new ArrayList<Triplet>();
-        makeIndex(dataFile, null);
-        // On trie l'index
-        Collections.sort(index);
+ 
+    // Temporaire : j'ai mis un ennumeration mais on peut améliorer ca 
+    // 0 pour Subject, 1 pour Predicat, 2 pour objet  
+    
+    public enum Triplet{
+        SPO(0,1,2),
+        SOP(0,2,1),
+        PSO(1,0,2),
+        OSP(1,2,0),
+        POS(2,0,1),
+        OPS(2,1,0);
+        
+    public int S,P,O;     
+    
+    Triplet(int S, int P, int O ){
+        this.S=S;
+        this.P=P;
+        this.O=O;
+    }
     }
 
-    private void makeIndex(String dataFile, String baseURI) throws FileNotFoundException, IOException {
+    // une map avec trois élements qui sont des entiers 
+    private final Map<Integer, Map<Integer, List<Integer>>> indexe;
+    
+    // une instanciation de l'ennumeration 
+    private Triplet triplet;
+    
+    // une instance de @Index 
+    private static final Map<Triplet, Index> inst = new HashMap<>();
+   
+    // contructeur de l'index
+    private Index(Triplet triplet){
+        indexe = new TreeMap<>();
+        this.triplet = triplet;
+    }    
 
-        try (Reader dataReader = new FileReader(dataFile)) {
-            // On va parser des données au format ntriples
-            RDFParser rdfParser = Rio.createParser(RDFFormat.NTRIPLES);
+    // renvoie l'instance de l'index
+    public static Index getInstance(Triplet type) {
+        if(!inst.containsKey(type))
+            inst.put(type, new Index(type));
 
-            // On utilise notre implémentation de handler
-            rdfParser.setRDFHandler(new MainRDFHandler());
+        return inst.get(type);
+    }
 
-            Model model = new LinkedHashModel();
-            rdfParser.setRDFHandler(new StatementCollector(model));
+    // Ajouter les elements à l'index
+    public void add(int S, int P, int O) {
+        // on init avec l'ordre S,P,O
+        int[] val = order(S, P, O);
 
-            // Parsing et traitement de chaque triple par le handler
-            rdfParser.parse(dataReader, baseURI);
-
-            int s, p, o;
-            for (Statement st : model) {
-                s = dictionnaire.getKeyByValue(st.getSubject().toString());
-                p = dictionnaire.getKeyByValue(st.getPredicate().getLocalName());
-                o = dictionnaire.getKeyByValue(st.getObject().toString());
-                try {
-                    switch (order) {
-                    case "spo":
-                        index.add(new Triplet(s, p, o, st));
-                        break;
-                    case "sop":
-                        index.add(new Triplet(s, o, p, st));
-                        break;
-                    case "pso":
-                        index.add(new Triplet(p, s, o, st));
-                        break;
-                    case "pos":
-                        index.add(new Triplet(p, o, s, st));
-                        break;
-                    case "osp":
-                        index.add(new Triplet(o, s, p, st));
-                        break;
-                    case "ops":
-                        index.add(new Triplet(o, p, s, st));
-                        break;
-                    default:
-                        throw new Exception("Erreur : le type d'index est incorrect");
-                    }
-
-                } catch (Exception e) {
-                    System.err.println("Erreur :" + e);
+        // si l'indexe contient une clé à val[0]
+        if(indexe.containsKey(val[0])) {
+            Map<Integer, List<Integer>> valeur = indexe.get(val[0]);
+            
+            // si l'indexe contient une clé à val[1]
+            if(valeur.containsKey(val[1])) {
+                valeur.get(val[1]).add(val[2]);
+                } 
+                else {
+                    List<Integer> valeur2 = new ArrayList<>();
+                    valeur2.add(val[2]);
+                    valeur.put(val[1], valeur2);
                 }
+        } else {
+            
+            Map<Integer, List<Integer>> valeur = new TreeMap<>();
+            List<Integer> valeur2 = new ArrayList<>();
+            valeur2.add(val[2]);
+            valeur.put(val[1], valeur2);
+            indexe.put(val[0], valeur);
+        }
+    }
 
+    private int[] order(int S, int P, int O) {
+        int[] val = new int[3];
+        val[triplet.S] = S;
+        val[triplet.P] = P;
+        val[triplet.O] = O;
+
+        return val;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        for(Map.Entry<Integer, Map<Integer, List<Integer>>> index1 : indexe.entrySet()) {
+            for(Map.Entry<Integer, List<Integer>> index2 : index1.getValue().entrySet()) {
+                for (Integer third : index2.getValue()) {
+                    builder.append("(")
+                           .append(index1.getKey())
+                           .append(".")
+                           .append(index2.getKey())
+                           .append(".")
+                           .append(third)
+                           .append(")\n");
+                }
             }
         }
 
+        return builder.toString();
     }
+    
+    
+    
+
+
 }
