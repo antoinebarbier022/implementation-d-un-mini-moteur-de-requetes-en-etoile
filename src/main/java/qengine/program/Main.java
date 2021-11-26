@@ -86,11 +86,14 @@ final class Main {
 		Index I = new Index();
 
 		// On parse le fichier des données et on remplie le dictionnaire et l'index
+		long startRecordDataParserTime = System.currentTimeMillis();
 		new ParserDatas(dataFile, A, I);
+		long endRecordDataParserTime = System.currentTimeMillis();
 
 		// affichage du dictionnaire
-		System.out.println(A);
+		// System.out.println(A);
 
+		System.out.println("Dictionnaire + Index : " + (endRecordDataParserTime - startRecordDataParserTime) + " ms");
 		System.out.println("============= Fin =============");
 
 	}

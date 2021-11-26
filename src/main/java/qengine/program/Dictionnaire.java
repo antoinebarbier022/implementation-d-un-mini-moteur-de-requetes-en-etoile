@@ -27,6 +27,6 @@ public class Dictionnaire {
 
     @Override
     public String toString() {
-        return "\nDictionnaire : \n" + dico.toString().replace(" ", "\n").replace("=", " : ") + "\n";
+        return "\nDictionnaire : \n" + dico.toString().replace(",", "\n").replace("=", " : ") + "\n";
     }
 }

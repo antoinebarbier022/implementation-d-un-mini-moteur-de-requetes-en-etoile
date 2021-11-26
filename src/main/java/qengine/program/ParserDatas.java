@@ -80,7 +80,6 @@ public class ParserDatas {
 
                 // System.out.println("SPO : "+keySubject + " " + keyPredicate + " " +
                 // keyObject);
-
             }
         }
 
