@@ -3,6 +3,8 @@ package qengine.program;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.io.FileWriter;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -23,6 +25,28 @@ public class Dictionnaire {
      */
     public Dictionnaire() throws FileNotFoundException, IOException {
         dico = HashBiMap.create();
+    }
+
+    public void export(String outputDir) throws Exception {
+        String filename = "Dictionnaire.txt";
+        String path = outputDir + filename;
+
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Exception("Erreur export dictionnaire : Problème ouverture du fichier : " + filename);
+        }
+        try {
+            fw.write(this.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Exception(
+                    "Erreur export dictionnaire : Problème lors de l'écriture dans le fichier : " + filename);
+        }
+
     }
 
     @Override

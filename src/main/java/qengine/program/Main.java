@@ -68,7 +68,7 @@ final class Main {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		System.out.println("============= Début =============");
+		System.out.println("\n============= Warnings & Errors =============");
 
 		// On passe les différents fichiers en arguments
 		if (args.length < 3) {
@@ -90,11 +90,37 @@ final class Main {
 		new ParserDatas(dataFile, A, I);
 		long endRecordDataParserTime = System.currentTimeMillis();
 
+		// On exporte le dictionnaire dans un fichier
+		long startRecordExportDicoTime = System.currentTimeMillis();
+		A.export(resultFile);
+		long endRecordExportDicoTime = System.currentTimeMillis();
+
 		// affichage du dictionnaire
 		// System.out.println(A);
 
-		System.out.println("Dictionnaire + Index : " + (endRecordDataParserTime - startRecordDataParserTime) + " ms");
-		System.out.println("============= Fin =============");
+		System.out.println("\n============= Début =============");
+
+		System.out.println("Temps d'executions (calcule):");
+		System.out
+				.println("\tDictionnaire + Index : \t" + (endRecordDataParserTime - startRecordDataParserTime) + " ms");
+		System.out.println("\tRequêtes : \t\t" + "...." + " ms");
+		System.out.println("\tTotal calcules : \t" + "...." + " ms");
+
+		System.out.println();
+
+		System.out.println("Temps des exports (calcule):");
+		System.out
+				.println("\tExport dictionnaire : \t" + (endRecordExportDicoTime - startRecordExportDicoTime) + " ms");
+		System.out.println("\tExport index : \t\t" + "...." + " ms");
+		System.out.println("\tExport requêtes : \t" + "...." + " ms");
+		System.out.println("\tTotal exports : \t" + "...." + " ms");
+
+		System.out.println();
+
+		System.out.println("Temps total (calcules + exports):");
+		System.out.println("\tTotal : " + "...." + " ms");
+
+		System.out.println("\n============= Fin =============\n");
 
 	}
 
