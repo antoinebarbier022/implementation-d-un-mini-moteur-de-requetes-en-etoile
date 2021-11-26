@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+import java.io.FileWriter;
 
 // On a un enum qui enregistre les différents types d'index (la position des s, o, p est différentes, on enregistre donc leurs positions)
 enum TypeIndex {
@@ -43,9 +45,13 @@ public class Index {
             positionElement = new int[3];
 
             // En fonction du type d'index, la position est différente
-            firstElement = (positionElement[type.S] = subject);
-            secondElement = (positionElement[type.P] = predicate);
-            thirdElement = (positionElement[type.O] = object);
+            positionElement[type.S] = subject;
+            positionElement[type.P] = predicate;
+            positionElement[type.O] = object;
+
+            firstElement = positionElement[0];
+            secondElement = positionElement[1];
+            thirdElement = positionElement[2];
 
             // Initialisation du type d'index si cela n'est pas encore fait
             index.putIfAbsent(type, new HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>());
@@ -72,6 +78,58 @@ public class Index {
             }
 
         }
+    }
+
+    public void export(String outputDir) throws Exception {
+        String filename = "Index.txt";
+        String path = outputDir + filename;
+
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Exception("Erreur export index : Problème ouverture du fichier : " + filename);
+        }
+        try {
+            for (Map.Entry<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> mapentry : index
+                    .entrySet()) {
+                // System.out.println("Type d'index : " + mapentry.getKey());// + " | valeur: "
+                // + mapentry.getValue());
+
+                for (Map.Entry<Integer, HashMap<Integer, ArrayList<Integer>>> mapentry2 : index.get(mapentry.getKey())
+                        .entrySet()) {
+
+                    for (Map.Entry<Integer, ArrayList<Integer>> mapentry3 : index.get(mapentry.getKey())
+                            .get(mapentry2.getKey()).entrySet()) {
+
+                        for (Integer mapentry4 : index.get(mapentry.getKey()).get(mapentry2.getKey())
+                                .get(mapentry3.getKey())) {
+                            // Ecriture dans le fichier
+                            fw.write(mapentry.getKey() + " -> (" + mapentry2.getKey() + "," + mapentry3.getKey() + ","
+                                    + mapentry4 + ")\n");
+                        }
+                    }
+
+                }
+                // séparation entre les type d'index
+                fw.write("\n=========\n");
+
+            }
+            /*
+             * for (Map.Entry<Integer, Map<Integer, ArrayList<Integer>>> t :
+             * triplet.entrySet()) { for (Map.Entry<Integer, ArrayList<Integer>> tt :
+             * t.getValue().entrySet()) { for (Integer ttt : tt.getValue()) { bf.write("(" +
+             * t.getKey() + "," + tt.getKey() + "," + ttt + ")"); bf.newLine();
+             * 
+             * } } }
+             */
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Exception("Erreur export index : Problème lors de l'écriture dans le fichier : " + filename);
+        }
+
     }
 
 }

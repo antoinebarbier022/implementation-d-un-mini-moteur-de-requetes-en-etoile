@@ -95,6 +95,11 @@ final class Main {
 		A.export(resultFile);
 		long endRecordExportDicoTime = System.currentTimeMillis();
 
+		// On exporte l'index dans un fichier
+		long startRecordExportIndexTime = System.currentTimeMillis();
+		I.export(resultFile);
+		long endRecordExportIndexTime = System.currentTimeMillis();
+
 		// affichage du dictionnaire
 		// System.out.println(A);
 
@@ -111,7 +116,7 @@ final class Main {
 		System.out.println("Temps des exports (calcule):");
 		System.out
 				.println("\tExport dictionnaire : \t" + (endRecordExportDicoTime - startRecordExportDicoTime) + " ms");
-		System.out.println("\tExport index : \t\t" + "...." + " ms");
+		System.out.println("\tExport index : \t\t" + (endRecordExportIndexTime - startRecordExportIndexTime) + " ms");
 		System.out.println("\tExport requêtes : \t" + "...." + " ms");
 		System.out.println("\tTotal exports : \t" + "...." + " ms");
 

@@ -27,6 +27,8 @@ public class Dictionnaire {
         dico = HashBiMap.create();
     }
 
+    // Méthode pour exporter le dictionnaire dans un fichier nommé Dictionnaire.txt
+    // situé dans le dossier souhaité
     public void export(String outputDir) throws Exception {
         String filename = "Dictionnaire.txt";
         String path = outputDir + filename;
