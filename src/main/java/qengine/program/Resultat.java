@@ -2,18 +2,18 @@ package qengine.program;
 
 import java.util.ArrayList;
 
-public class Select {
+public class Resultat {
 	ArrayList<String> select = new ArrayList<String>();
 	ArrayList<Integer> answer = new ArrayList<Integer>();
 	
-	public Select(String s1, String s2, String s3) {
+	public Resultat(String s1, String s2, String s3) {
 		select.add(s1);
 		select.add(s2);
 		select.add(s3);
 	}
 	
 	
-	public ArrayList<String> getSelect() {
+	public ArrayList<String> getResultat() {
 		return this.select;
 	}
 

@@ -1,7 +1,24 @@
 package qengine.program;
 
+import java.io.BufferedOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.rio.helpers.AbstractRDFHandler;
+
+
+import static java.nio.file.StandardOpenOption.*;
 
 
 
@@ -16,43 +33,122 @@ import org.eclipse.rdf4j.rio.helpers.AbstractRDFHandler;
  * </p>
  */
 
- public final class MainRDFHandler extends AbstractRDFHandler {
+public final class MainRDFHandler extends AbstractRDFHandler {
+	
+	static final String outputDictionnary = Main.output + "/Dictionnaire.txt";
+	static final String outputIndex = Main.output;
+	
+	
+	
+	
+	static DictionnaireV1 dictionary = new Dictionnaire();	
+	static IndexeV1 SPO = new Indexe("SPO");
+	static IndexeV1 SOP = new Indexe("SOP");
+	static IndexeV1 PSO = new Indexe("PSO");
+	static IndexeV1 POS = new Indexe("POS");
+	static IndexeV1 OSP = new Indexe("OSP");
+	static IndexeV1 OPS = new Indexe("OPS");
 
-
-			
+	static int nbTriplet = 0;
+	
+	
+	
+	
 	@Override
 	public void handleStatement(Statement st) {
+		nbTriplet++;
+		Integer[] toAdd = dictionary.updateDictionary(st);
+		add(toAdd[0], toAdd[1], toAdd[2],SPO);
+		add(toAdd[0], toAdd[1], toAdd[2],SOP);
+		add(toAdd[0], toAdd[1], toAdd[2],PSO);
+		add(toAdd[0], toAdd[1], toAdd[2],POS);
+		add(toAdd[0], toAdd[1], toAdd[2],OSP);
+		add(toAdd[0], toAdd[1], toAdd[2],OPS);
 
-		String subject = st.getSubject().stringValue();
-		String predicate = st.getPredicate().stringValue();
-		String object = st.getObject().stringValue();
-		Dictionnaire dico = dico.getInstance();
-		
-
-		// Ajout dans le dictionnaire
-		dico.add(subject, predicate, object);
-
-		// Ajout dans les index
-		int S = dico.get(subject);
-		int P = dico.get(predicate);
-		int O = dico.get(object);
-
-		for(Triplet triplet : Triplet.values()) {
-			Index.getInstance(triplet).add(S, P, O);
+	};
+	
+	 
+	public static void writeDictionnary() throws IOException {
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(outputDictionnary);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} 	   
+		try {
+			fw.write(dictionary.toString());
+			fw.close();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	}
-}
+	
+	
+	
+	public static void writeIndex() throws IOException {
+		ArrayList<IndexeV1> indexes = indexesToArray();
+		for(IndexeV1 i : indexes) {
+			String path = outputIndex + i.getOrder() + ".txt";
+			FileWriter fw = null;
+			try {
+				fw = new FileWriter(path);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}  	   
+			try {
+				fw.write(i.toString());
+				fw.close();
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static ArrayList<IndexeV1> indexesToArray(){
+		ArrayList<IndexeV1> indexes = new ArrayList<IndexeV1>();
+		indexes.add(SPO);
+		indexes.add(SOP);	
+		indexes.add(PSO);
+		indexes.add(POS);
+		indexes.add(OSP);
+		indexes.add(OPS);
+
+		return indexes;
+	}
+	
+	
+	public void add(Integer s,Integer p,Integer o , IndexeV1 idx) {
+		String toSwitch = idx.getOrder();
+		switch(toSwitch) {
+		case "SPO" : 
+			idx.add(s,p,o);
+			break;
+		case "SOP" : 
+			idx.add(s,o,p);
+			break;
+		case "PSO" :
+			idx.add(p,s,o);
+			break;
+		case "POS" :
+			idx.add(p,o,s);
+			break;
+		case "OSP" :			
+			idx.add(o,s,p);
+			break;
+		case "OPS" :
+			idx.add(o,p,s);
+			break;
+		default:
+			System.out.println("Default switch case");
+			break;
+		}
+	}
+	
+	
+
+
+	}
+	

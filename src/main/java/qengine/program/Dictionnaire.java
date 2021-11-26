@@ -1,110 +1,112 @@
 package qengine.program;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
+import org.eclipse.rdf4j.model.Statement;
 
+import qengine.program.DictionnaireV1;
 
-public class Dictionnaire {
+public class Dictionnaire extends DictionnaireV1 {
+	
+	static HashMap<Integer,String> dictionary= new HashMap<Integer,String>();
+	static double execDictionnary = 0;
+	
+	public Dictionnaire(){
+		super();
+	}
+	
+	public HashMap<Integer,String>  getDictionary(){
+		return dictionary;
+	}
+	
+	public Integer[] updateDictionary(Statement st) {
+		double start = System.currentTimeMillis();
+		boolean subject = false;
+		boolean predicate = false;
+		boolean object = false;
+		Integer [] toAdd = {0,0,0};			
+		int subjectIndex = 0 , predicateIndex= 0, objectIndex = 0;
 
-    // Dictionnaire
-    
-    // map1 avec premier élément un string puis un entier
-    private final Map<String, Integer> map1; 
-    
-    // map2 avec premier élément un entier puis un string
-    private final Map<Integer, String> map2; 
+		 Iterator it = dictionary.entrySet().iterator();
+		 
+		 while (it.hasNext()) {
+			 
+			 HashMap.Entry dic = (Entry) it.next();
+			 String value = (String) ((Entry) dic).getValue();
+			 Integer key = (Integer) ((Entry) dic).getKey();
+			 
+			 if(value.equals(st.getSubject().toString())) {
+					subject = true;
+					subjectIndex= key;
+				}
+				
+				if(value.equals(st.getPredicate().toString())) {
+					predicate = true;
+					predicateIndex = key;
+				}
+				
+				if(value.equals(st.getObject().toString())) {
+					object = true;
+					objectIndex = key;
+				}
+		 }	
+		
+			
+			if(!subject) {
+				Integer compteurHm = dictionary.size()+1;
+				dictionary.put(compteurHm, st.getSubject().toString());
+				toAdd[0] = compteurHm;
+			}
+			else
+				toAdd[0] = subjectIndex;
+			if(!predicate) {
+				Integer compteurHm = dictionary.size()+1;
+				dictionary.put(compteurHm,st.getPredicate().toString());
+				toAdd[1] = compteurHm;
 
-    // Un compteur
-    private int compteur;
+			}
+			else
+				toAdd[1] = predicateIndex;
+			if(!object) {
+				Integer compteurHm = dictionary.size()+1;
+				dictionary.put(compteurHm,st.getObject().toString());
+				toAdd[2]= compteurHm;
+			}
+			else
+				toAdd[2]= objectIndex;
+			double end = System.currentTimeMillis();
+			execDictionnary += (end - start);
+			return toAdd;
+	}
+	public Integer getKey(String s) {
+	 for ( Entry<Integer, String> entry : dictionary.entrySet()) {
+		  String value = entry.getValue();
+		  if(s.equals(value)) {
+			  return entry.getKey();
+		  }
 
-    // crée une instance de notre dictionnaire 
-    private static Dictionnaire inst;
-        
-    
-    
-    /**
-     * Construction d'un dictionnaire
-     * 
-     * @param file : données que l'on place dans un dictionnaire
-     * @throws IOException
-     * @throws FileNotFoundException
-     */
-    
-    
-    public Dictionnaire(){
-        map1 = new HashMap<>();
-        map2 = new HashMap<>();
-        compteur = 1; 
-    }
-
-
-    /**
-     * Création d'une instance @Dictionnaire      
-     ** 
-     */
-
-    public static Dictionnaire getInstance(){
-        if(inst == null){
-            inst = new Dictionnaire();
-        } 
-        return inst;
-    }
-    
-    /**
-     * Recupération de la valeur      
-     ** 
-     */
-    
-    
-    public int get(String value) throws NullPointerException {
-        return map1.get(value);
-    }
-    
-    /**
-     * Recupération de la clef      
-     ** 
-     */
-    
-    public String get(int index) throws NullPointerException {
-        return map2.get(index);
-    }
-
-     /**
-     * ajouter la valeur à map1 si il contient pas de valeur et on augmente le compteur      
-     ** 
-     */
-
-    public void add(String... values) {
-        for(String value : values) {
-            if(!map1.containsKey(value)) {
-                map1.put(value, compteur);
-                map2.put(compteur, value);
-                compteur++;
-            }
-        }
-    }
-
-    @Override
-    public String toString(){
-        StringBuilder builder = new StringBuilder();
-        for(Map.Entry<String, Integer> entry : map1.entrySet()) {
-            builder.append(entry.getKey())
-                .append(" : ")
-                .append(entry.getValue())
-                .append(" \n");
-                
-        }
-
-    return builder.toString(); 
-
-
-
-    }
-
-
-
-
-   
+		}
+	 return null;
+	}
+	
+	public static double getTimeDictionnary() {
+		return execDictionnary;
+	}
+	
+	public String getValue(Integer i) {
+		return dictionary.get(i);
+		}
+	 public String toString() {
+		 StringBuilder builder = new StringBuilder();
+		 Iterator it = dictionary.entrySet().iterator();
+		 
+		 while (it.hasNext()) {
+			 HashMap.Entry dic = (HashMap.Entry) it.next();
+			 builder.append(((Entry) dic).getKey()+" : " + ((Entry) dic).getValue()+ "\n");
+		 }
+		 return builder.toString();
+	}
 }

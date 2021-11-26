@@ -8,7 +8,7 @@ public enum Triplet{
     POS(2,0,1),
     OPS(2,1,0);
     
-    public int S,P,O;     
+    public final int S,P,O;     
 
     Triplet(int S, int P, int O ){
         this.S=S;
