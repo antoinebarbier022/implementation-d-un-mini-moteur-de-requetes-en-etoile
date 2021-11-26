@@ -9,6 +9,9 @@ import com.google.common.collect.HashBiMap;
 public class Dictionnaire {
 
     // Dictionnaire
+    // On a besoins d'accéder au dictionnaire dans les deux sens :
+    // - clef-valeur et valeur-clef
+    // On a donc fait le choix d'utiliser la structure BiMap qui permet de le faire
     public BiMap<Integer, String> dico;
 
     /**

@@ -70,6 +70,7 @@ final class Main {
 
 		System.out.println("============= Début =============");
 
+		// On passe les différents fichiers en arguments
 		if (args.length < 3) {
 			throw new Exception(
 					"Erreur : Vous devez saisir les options de la façon suivante : qengine <queryFile> <dataFile> <restultFile> ");
@@ -79,16 +80,16 @@ final class Main {
 			resultFile = args[2];
 		}
 
+		// Création du dictionnaire vide
 		Dictionnaire A = new Dictionnaire();
+		// Création d'un index vide
 		Index I = new Index();
 
+		// On parse le fichier des données et on remplie le dictionnaire et l'index
 		new ParserDatas(dataFile, A, I);
 
 		// affichage du dictionnaire
 		System.out.println(A);
-
-		// affichage de l'index
-		System.out.println(I);
 
 		System.out.println("============= Fin =============");
 

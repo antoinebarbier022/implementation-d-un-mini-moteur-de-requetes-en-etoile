@@ -34,8 +34,13 @@ public class ParserDatas {
             int keySubject, keyPredicate, keyObject;
             String subject, predicate, object;
 
+            // Pour chaque statement récupérer depuis le fichier data, on extrait le sujet,
+            // le prédicat et l'objet et on les places dans un dictionnaire. Une fois le
+            // statement placé dans un dictionnaire, on peut fabriquer l'index pour le
+            // retrouver plus rapidement
             for (Statement st : model) {
 
+                // Sujet, Prédicat, Objet
                 subject = st.getSubject().toString();
                 predicate = st.getPredicate().getLocalName();
                 object = st.getObject().toString();
@@ -43,8 +48,8 @@ public class ParserDatas {
                 // Première étape : On ajoute la donnée dans le dictionnaire
                 // Deuxième étape : On ajoute les données (s, p, o) dans l'index
 
-                // Si subject de la data est déjà présente dans le dictionnaire, on ne le
-                // rajoute pas
+                // Si le sujet est déjà présent dans le dictionnaire, on ne le rajoute pas et on
+                // récupère ça position (entier associé au string)
                 if (!dictionnaire.dico.containsValue(subject)) {
                     keySubject = key;
                     dictionnaire.dico.put(key++, st.getSubject().toString());
@@ -52,8 +57,8 @@ public class ParserDatas {
                     keySubject = dictionnaire.dico.inverse().get(subject);
                 }
 
-                // Si predicate de la data est déjà présente dans le dictionnaire, on ne le
-                // rajoute pas
+                // Si le prédicat est déjà présent dans le dictionnaire, on ne le rajoute pas et
+                // on récupère ça position (entier associé au string)
                 if (!dictionnaire.dico.containsValue(predicate)) {
                     keyPredicate = key;
                     dictionnaire.dico.put(key++, st.getPredicate().getLocalName());
@@ -61,8 +66,8 @@ public class ParserDatas {
                     keyPredicate = dictionnaire.dico.inverse().get(predicate);
                 }
 
-                // Si object de la data est déjà présente dans le dictionnaire, on ne le rajoute
-                // pas
+                // Si l'objet est déjà présent dans le dictionnaire, on ne le rajoute pas et on
+                // récupère ça position (entier associé au string)
                 if (!dictionnaire.dico.containsValue(object)) {
                     keyObject = key;
                     dictionnaire.dico.put(key++, st.getObject().toString());
@@ -70,10 +75,11 @@ public class ParserDatas {
                     keyObject = dictionnaire.dico.inverse().get(predicate);
                 }
 
-                // Ajout des données dans l'index
+                // Ajout des 3 clefs qui représente le statement dans l'index
                 index.add(keySubject, keyPredicate, keyObject);
 
-                System.out.println(keySubject + " " + keyPredicate + " " + keyObject);
+                // System.out.println("SPO : "+keySubject + " " + keyPredicate + " " +
+                // keyObject);
 
             }
         }
