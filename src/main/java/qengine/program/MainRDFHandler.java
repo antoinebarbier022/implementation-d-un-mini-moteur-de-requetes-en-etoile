@@ -147,6 +147,31 @@ public final class MainRDFHandler extends AbstractRDFHandler {
 		}
 	}
 	
+	public static void writeToCSV(ArrayList<String> addToCSV) {
+		String toWrite = "nom du fichier de données | nom du dossier des requêtes | nombre de triplets RDF | nombre de requêtes | temps de lecture des données (ms) | temps de lecture des requêtes (ms) | temps création dico (ms) | nombre d’index | temps de création des index (ms) | temps total d’évaluation du workload (ms) | temps total (du début à la fin du programme) (ms)\n";
+		String path = outputIndex + "Question4" + ".csv";
+		for(String s : addToCSV) {
+			toWrite+= s+"|";
+		}
+		toWrite = toWrite.substring(0,toWrite.length()-1);
+		FileWriter fw = null;
+
+			try {
+				fw = new FileWriter(path);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}  	   
+			try {
+				fw.write(toWrite.toString());
+				fw.close();
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+	
 	
 
 

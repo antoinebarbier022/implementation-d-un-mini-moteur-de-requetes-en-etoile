@@ -91,7 +91,7 @@ final class Main {
 		builderBase.append("====== Bienvenue dans le projet qui s'intetule Implementation d’un mini moteur de requêtes en étoile  ====== \n");
 		System.out.println(builderBase.toString());
 		builder.append("====== Choisissez votre opération ======= \n" );
-		
+				
 		builder.append("====== Sans écriture dans output ======= \n" );
 		builder.append("\n1 : Création du dictionnaire ");
 		builder.append("\n2 : Création des 6 indexes ");
@@ -102,6 +102,8 @@ final class Main {
 		builder.append("\n4 : Création du dictionnaire dans output/Dictionnaire.txt ");
 		builder.append("\n5 : Création des 6 index dans output/  ");
 		builder.append("\n6 : Chargement + exécution des requêtes dans output/ ");
+		
+		builder.append("\n7 : Les temps d’évaluation des requêtes, ainsi que le temps total d’évaluation du workload");
 		
 		
 		while(compteur != 0) {
@@ -188,6 +190,33 @@ final class Main {
 				
 				System.out.println("Fin d'exécution des requetes");
 				break;	
+				
+			case 7: 
+				ArrayList<String> csv = new ArrayList<String>();
+				
+				double start3 = System.currentTimeMillis();parseData();
+				
+				ArrayList<Requete> requete = parseQueries();
+				
+				Processor processor3 = new Processor(MainRDFHandler.dictionary,MainRDFHandler.indexesToArray(), requete);
+				
+				processor3.doQueries();
+				
+				processor3.writeAnswers(output);
+				
+				double end3 = System.currentTimeMillis();
+				
+				double total = (end3 - start3);
+				
+				csv.add(dataFile);csv.add(queryFile);csv.add(String.valueOf(MainRDFHandler.nbTriplet));csv.add(String.valueOf(requete.size()));csv.add("NON_DISPONIBLE");csv.add("NON_DISPONIBLE");csv.add(String.valueOf(Dictionnaire.getTimeDictionnary()));csv.add("6");csv.add(String.valueOf(Indexe.getExecIndex()));csv.add(String.valueOf(total));		
+				
+				double end4 = System.currentTimeMillis();
+				
+				double total2 = end4-start3;
+				
+				csv.add(String.valueOf(total2));
+				
+				MainRDFHandler.writeToCSV(csv);
 				
 			case 0 : 
 				System.out.println("Merci de votre visite, bonne journée !");
