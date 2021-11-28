@@ -1,8 +1,5 @@
 package qengine.program;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * Programme simple lisant un fichier de requête et un fichier de données.
  * 
@@ -75,37 +72,44 @@ final class Main {
 
 		// On Parse les requêtes
 		long startRecordParsingRequestTime = System.currentTimeMillis();
-
-		System.out.println(index.indexes.get(TypeIndex.POS).get(11948).get(11686));
-		String s1 = index.indexes.get(TypeIndex.POS).get(11948).get(11686).toString();
-		new ParserQueries(queryFile, dictionnaire, index);
+		ParserQueries requests = new ParserQueries(queryFile, dictionnaire, index);
 		long endRecordParsingRequestTime = System.currentTimeMillis();
-		String s2 = index.indexes.get(TypeIndex.POS).get(11948).get(11686).toString();
-		System.out.println("egale =" + s1.equals(s2));
-		System.out.println("s1 =" + s1);
-		System.out.println("s2 =" + s2);
+
+		// On exporte les requetes
+		long startRecordExportRequestTime = System.currentTimeMillis();
+		requests.export(resultFile, dictionnaire);
+		long endRecordExportRequestTime = System.currentTimeMillis();
 
 		System.out.println("\n============= Début =============");
 
+		int temps_calcule_dic_et_index = (int) (endRecordDataParserTime - startRecordDataParserTime);
+		int temps_calcule_requetes = (int) (endRecordParsingRequestTime - startRecordParsingRequestTime);
+		int temps_calcule_total = temps_calcule_dic_et_index + temps_calcule_requetes;
+
 		System.out.println("Temps d'executions (calcule):");
-		System.out
-				.println("\tDictionnaire + Index : \t" + (endRecordDataParserTime - startRecordDataParserTime) + " ms");
-		System.out.println("\tRequêtes : \t\t" + (endRecordParsingRequestTime - startRecordParsingRequestTime) + " ms");
-		System.out.println("\tTotal calcules : \t" + "...." + " ms");
+		System.out.println("\tDictionnaire + Index : \t" + temps_calcule_dic_et_index + " ms");
+		System.out.println("\tRequêtes : \t\t" + temps_calcule_requetes + " ms");
+		System.out.println("\tTotal calcules : \t" + temps_calcule_total + " ms");
 
 		System.out.println();
+
+		int temps_export_dic = (int) (endRecordExportDicoTime - startRecordExportDicoTime);
+		int temps_export_index = (int) (endRecordExportIndexTime - startRecordExportIndexTime);
+		int temps_export_requetes = (int) (endRecordExportRequestTime - startRecordExportRequestTime);
+		int temps_export_total = temps_export_dic + temps_export_index + temps_export_requetes;
 
 		System.out.println("Temps des exports (calcule):");
-		System.out
-				.println("\tExport dictionnaire : \t" + (endRecordExportDicoTime - startRecordExportDicoTime) + " ms");
-		System.out.println("\tExport index : \t\t" + (endRecordExportIndexTime - startRecordExportIndexTime) + " ms");
-		System.out.println("\tExport requêtes : \t" + "...." + " ms");
-		System.out.println("\tTotal exports : \t" + "...." + " ms");
+		System.out.println("\tExport dictionnaire : \t" + temps_export_dic + " ms");
+		System.out.println("\tExport index : \t\t" + temps_export_index + " ms");
+		System.out.println("\tExport requêtes : \t" + temps_export_requetes + " ms");
+		System.out.println("\tTotal exports : \t" + temps_export_total + " ms");
 
 		System.out.println();
 
+		int temps_total = temps_calcule_total + temps_export_total;
+
 		System.out.println("Temps total (calcules + exports):");
-		System.out.println("\tTotal : " + "...." + " ms");
+		System.out.println("\tTotal : " + temps_total + " ms");
 
 		System.out.println("\n============= Fin =============\n");
 

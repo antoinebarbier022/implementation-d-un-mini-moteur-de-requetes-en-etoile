@@ -53,7 +53,6 @@ public class Dictionnaire {
             throw new Exception(
                     "Erreur export dictionnaire : Problème lors de l'écriture dans le fichier : " + filename);
         }
-
     }
 
     @Override

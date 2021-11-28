@@ -3,12 +3,14 @@ package qengine.program;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.rdf4j.model.Value;
 //import org.eclipse.rdf4j.query.algebra.Projection;
@@ -20,6 +22,8 @@ import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 
 public class ParserQueries {
 
+    HashMap<String, ArrayList<Integer>> requetesResultats;
+
     /**
      * Traite chaque requête lue dans {@link #queryFile} avec
      * {@link #processAQuery(ParsedQuery)}.
@@ -27,6 +31,8 @@ public class ParserQueries {
      * @throws Exception
      */
     public ParserQueries(String queryFile, Dictionnaire dictionnaire, Index index) throws Exception {
+
+        requetesResultats = new HashMap<String, ArrayList<Integer>>();
         /**
          * Try-with-resources
          * 
@@ -183,11 +189,50 @@ public class ParserQueries {
             res.retainAll(resulatsRequete.get(i));
         }
 
+        // On place la requete et sa réponse dans la structure
+        requetesResultats.putIfAbsent(query.getSourceString(), res);
+
         System.out.println("résultats " + res.size());
         System.out.println();
         // } catch (NullPointerException e) {
         // throw new Exception("ERROR : " + e);
         //
+    }
+
+    public void export(String outputDir, Dictionnaire dictionnaire) throws Exception {
+        String filename = "Requetes.txt";
+        String path = outputDir + filename;
+
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Exception("Erreur export requetes : Problème ouverture du fichier : " + filename);
+        }
+        try {
+            fw.write(this.toString());
+            int numRequest = 0;
+            for (Map.Entry<String, ArrayList<Integer>> mapentry : requetesResultats.entrySet()) {
+                fw.write("\n==== Requête n°" + (++numRequest) + " =======================\n");
+                // Requete
+                fw.write("\n");
+                fw.write(mapentry.getKey().replace("{", "{\n").replace(" .	", " .\n	"));
+                fw.write("\n\n");
+
+                fw.write("\n\n");
+                fw.write("Résultats (" + mapentry.getValue().size() + ") \n");
+
+                for (Integer i : mapentry.getValue()) {
+                    fw.write(" - " + dictionnaire.dico.get(i).toString() + "\n");
+                }
+
+            }
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Exception("Erreur export requetes : Problème lors de l'écriture dans le fichier : " + filename);
+        }
     }
 
 }
