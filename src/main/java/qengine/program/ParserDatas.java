@@ -122,6 +122,8 @@ public class ParserDatas {
         this.tempsTotalParser = (int) (endTotalTime - startTotalTime);
     }
 
+    /* =========== Getters =========== */
+
     // Le temps de création de l'index est le temps total du parser (qui comprend
     // lecture des données + creation dico + création index) auquelle on lui enleve
     // le temps de lecture et le temps de création de l'index

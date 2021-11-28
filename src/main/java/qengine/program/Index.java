@@ -48,7 +48,7 @@ public class Index {
         indexes = new HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>>();
     }
 
-    /* Getters */
+    /* =========== Getters =========== */
 
     /**
      * @return Nombre de ligne dans l'index
@@ -64,7 +64,7 @@ public class Index {
         return this.t_export;
     }
 
-    /* Méthodes */
+    /* =========== Méthodes =========== */
 
     /**
      * Méthode d'ajout d'un triplet RDF dans l'index
