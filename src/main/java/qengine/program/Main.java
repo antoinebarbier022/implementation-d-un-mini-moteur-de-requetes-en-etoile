@@ -1,12 +1,7 @@
 package qengine.program;
 
-import java.util.List;
-
-import org.eclipse.rdf4j.query.algebra.Projection;
-import org.eclipse.rdf4j.query.algebra.StatementPattern;
-import org.eclipse.rdf4j.query.algebra.helpers.AbstractQueryModelVisitor;
-import org.eclipse.rdf4j.query.algebra.helpers.StatementPatternCollector;
-import org.eclipse.rdf4j.query.parser.ParsedQuery;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Programme simple lisant un fichier de requête et un fichier de données.
@@ -42,28 +37,6 @@ final class Main {
 	// ========================================================================
 
 	/**
-	 * Méthode utilisée ici lors du parsing de requête sparql pour agir sur l'objet
-	 * obtenu.
-	 */
-	public static void processAQuery(ParsedQuery query) {
-		List<StatementPattern> patterns = StatementPatternCollector.process(query.getTupleExpr());
-
-		System.out.println("first pattern : " + patterns.get(0));
-
-		System.out.println("object of the first pattern : " + patterns.get(0).getObjectVar().getValue());
-
-		System.out.println("variables to project : ");
-
-		// Utilisation d'une classe anonyme
-		query.getTupleExpr().visit(new AbstractQueryModelVisitor<RuntimeException>() {
-
-			public void meet(Projection projection) {
-				System.out.println(projection.getProjectionElemList().getElements());
-			}
-		});
-	}
-
-	/**
 	 * Entrée du programme
 	 */
 	public static void main(String[] args) throws Exception {
@@ -81,34 +54,43 @@ final class Main {
 		}
 
 		// Création du dictionnaire vide
-		Dictionnaire A = new Dictionnaire();
+		Dictionnaire dictionnaire = new Dictionnaire();
 		// Création d'un index vide
-		Index I = new Index();
+		Index index = new Index();
 
 		// On parse le fichier des données et on remplie le dictionnaire et l'index
 		long startRecordDataParserTime = System.currentTimeMillis();
-		new ParserDatas(dataFile, A, I);
+		new ParserDatas(dataFile, dictionnaire, index);
 		long endRecordDataParserTime = System.currentTimeMillis();
 
 		// On exporte le dictionnaire dans un fichier
 		long startRecordExportDicoTime = System.currentTimeMillis();
-		A.export(resultFile);
+		dictionnaire.export(resultFile);
 		long endRecordExportDicoTime = System.currentTimeMillis();
 
 		// On exporte l'index dans un fichier
 		long startRecordExportIndexTime = System.currentTimeMillis();
-		I.export(resultFile);
+		index.export(resultFile);
 		long endRecordExportIndexTime = System.currentTimeMillis();
 
-		// affichage du dictionnaire
-		// System.out.println(A);
+		// On Parse les requêtes
+		long startRecordParsingRequestTime = System.currentTimeMillis();
+
+		System.out.println(index.indexes.get(TypeIndex.POS).get(11948).get(11686));
+		String s1 = index.indexes.get(TypeIndex.POS).get(11948).get(11686).toString();
+		new ParserQueries(queryFile, dictionnaire, index);
+		long endRecordParsingRequestTime = System.currentTimeMillis();
+		String s2 = index.indexes.get(TypeIndex.POS).get(11948).get(11686).toString();
+		System.out.println("egale =" + s1.equals(s2));
+		System.out.println("s1 =" + s1);
+		System.out.println("s2 =" + s2);
 
 		System.out.println("\n============= Début =============");
 
 		System.out.println("Temps d'executions (calcule):");
 		System.out
 				.println("\tDictionnaire + Index : \t" + (endRecordDataParserTime - startRecordDataParserTime) + " ms");
-		System.out.println("\tRequêtes : \t\t" + "...." + " ms");
+		System.out.println("\tRequêtes : \t\t" + (endRecordParsingRequestTime - startRecordParsingRequestTime) + " ms");
 		System.out.println("\tTotal calcules : \t" + "...." + " ms");
 
 		System.out.println();

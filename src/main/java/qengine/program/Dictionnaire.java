@@ -27,6 +27,11 @@ public class Dictionnaire {
         dico = HashBiMap.create();
     }
 
+    // Récupère un élément du dictionnaire à partir de la valeur
+    public int getKeyByValue(String value) {
+        return this.dico.inverse().get(value);
+    }
+
     // Méthode pour exporter le dictionnaire dans un fichier nommé Dictionnaire.txt
     // situé dans le dossier souhaité
     public void export(String outputDir) throws Exception {

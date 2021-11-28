@@ -11,7 +11,14 @@ import java.io.FileWriter;
 // On a un enum qui enregistre les différents types d'index (la position des s, o, p est différentes, on enregistre donc leurs positions)
 enum TypeIndex {
     // enum constants calling the enum constructors
-    SPO(0, 1, 2), SOP(0, 2, 1), PSO(1, 0, 2), POS(1, 2, 0), OSP(2, 0, 1), OPS(2, 1, 0);
+
+    // Comment le construire ?
+    // On indique l'emplacement de la lettre pour chaque lettre.
+    // Exemple pour OSP :
+    // - l'emplacement du S est en case 1
+    // - l'emplacement du P est en case 2
+    // - l'emplacement du O est en case 0
+    SPO(0, 1, 2), SOP(0, 2, 1), PSO(1, 0, 2), OSP(1, 2, 0), POS(2, 0, 1), OPS(2, 1, 0);
 
     public int S, P, O;
 
@@ -26,11 +33,11 @@ enum TypeIndex {
 public class Index {
 
     // la classe Index contient 6 types d'index
-    public HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> index;
+    public HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> indexes;
 
     // Constructeur
     public Index() throws FileNotFoundException, IOException {
-        index = new HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>>();
+        indexes = new HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>>();
     }
 
     // Ajout d'un statement dans les Indexes
@@ -45,36 +52,36 @@ public class Index {
             positionElement = new int[3];
 
             // En fonction du type d'index, la position est différente
-            positionElement[type.S] = subject;
-            positionElement[type.P] = predicate;
-            positionElement[type.O] = object;
+            positionElement[type.S] = subject;// subject;
+            positionElement[type.P] = predicate;// predicate;
+            positionElement[type.O] = object;// object;
 
             firstElement = positionElement[0];
             secondElement = positionElement[1];
             thirdElement = positionElement[2];
 
             // Initialisation du type d'index si cela n'est pas encore fait
-            index.putIfAbsent(type, new HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>());
+            indexes.putIfAbsent(type, new HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>());
 
             // On regarde si le premier élément existe dans l'index
-            if (index.get(type).containsKey(firstElement)) {
+            if (indexes.get(type).containsKey(firstElement)) {
                 // On regarde si le deuxième élément existe dans l'index
-                if (index.get(type).get(firstElement).containsKey(secondElement)) {
+                if (indexes.get(type).get(firstElement).containsKey(secondElement)) {
                     // On regarde si le troisième élément existe dans l'index
-                    if (!index.get(type).get(firstElement).get(secondElement).contains(thirdElement)) {
+                    if (!indexes.get(type).get(firstElement).get(secondElement).contains(thirdElement)) {
                         // L'element n'existe pas déjà dans l'index, donc on le rajoute
-                        index.get(type).get(firstElement).get(secondElement).add(thirdElement);
+                        indexes.get(type).get(firstElement).get(secondElement).add(thirdElement);
                     }
                 } else {
                     // On rajoute seulement le second élément et le troisième élément
-                    index.get(type).get(firstElement).put(secondElement,
+                    indexes.get(type).get(firstElement).put(secondElement,
                             new ArrayList<Integer>(Arrays.asList(thirdElement)));
                 }
             } else {
                 // Aucun élément n'est dans la liste, donc on les rajoute tous
                 HashMap<Integer, ArrayList<Integer>> secondAndThird = new HashMap<Integer, ArrayList<Integer>>();
                 secondAndThird.put(secondElement, new ArrayList<Integer>(Arrays.asList(thirdElement)));
-                index.get(type).put(firstElement, secondAndThird);
+                indexes.get(type).put(firstElement, secondAndThird);
             }
 
         }
@@ -92,18 +99,18 @@ public class Index {
             throw new Exception("Erreur export index : Problème ouverture du fichier : " + filename);
         }
         try {
-            for (Map.Entry<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> mapentry : index
+            for (Map.Entry<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> mapentry : indexes
                     .entrySet()) {
                 // System.out.println("Type d'index : " + mapentry.getKey());// + " | valeur: "
                 // + mapentry.getValue());
 
-                for (Map.Entry<Integer, HashMap<Integer, ArrayList<Integer>>> mapentry2 : index.get(mapentry.getKey())
+                for (Map.Entry<Integer, HashMap<Integer, ArrayList<Integer>>> mapentry2 : indexes.get(mapentry.getKey())
                         .entrySet()) {
 
-                    for (Map.Entry<Integer, ArrayList<Integer>> mapentry3 : index.get(mapentry.getKey())
+                    for (Map.Entry<Integer, ArrayList<Integer>> mapentry3 : indexes.get(mapentry.getKey())
                             .get(mapentry2.getKey()).entrySet()) {
 
-                        for (Integer mapentry4 : index.get(mapentry.getKey()).get(mapentry2.getKey())
+                        for (Integer mapentry4 : indexes.get(mapentry.getKey()).get(mapentry2.getKey())
                                 .get(mapentry3.getKey())) {
                             // Ecriture dans le fichier
                             fw.write(mapentry.getKey() + " -> (" + mapentry2.getKey() + "," + mapentry3.getKey() + ","

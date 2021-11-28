@@ -31,7 +31,6 @@ public class ParserDatas {
             rdfParser.parse(dataReader, null);
 
             int key = 0;
-            int keySubject, keyPredicate, keyObject;
             String subject, predicate, object;
 
             // Pour chaque statement récupérer depuis le fichier data, on extrait le sujet,
@@ -41,9 +40,9 @@ public class ParserDatas {
             for (Statement st : model) {
 
                 // Sujet, Prédicat, Objet
-                subject = st.getSubject().toString();
-                predicate = st.getPredicate().getLocalName();
-                object = st.getObject().toString();
+                subject = st.getSubject().stringValue();
+                predicate = st.getPredicate().stringValue();
+                object = st.getObject().stringValue();
 
                 // Première étape : On ajoute la donnée dans le dictionnaire
                 // Deuxième étape : On ajoute les données (s, p, o) dans l'index
@@ -51,32 +50,24 @@ public class ParserDatas {
                 // Si le sujet est déjà présent dans le dictionnaire, on ne le rajoute pas et on
                 // récupère ça position (entier associé au string)
                 if (!dictionnaire.dico.containsValue(subject)) {
-                    keySubject = key;
-                    dictionnaire.dico.put(key++, st.getSubject().toString());
-                } else {
-                    keySubject = dictionnaire.dico.inverse().get(subject);
+                    dictionnaire.dico.put(key++, subject);
                 }
 
                 // Si le prédicat est déjà présent dans le dictionnaire, on ne le rajoute pas et
                 // on récupère ça position (entier associé au string)
                 if (!dictionnaire.dico.containsValue(predicate)) {
-                    keyPredicate = key;
-                    dictionnaire.dico.put(key++, st.getPredicate().getLocalName());
-                } else {
-                    keyPredicate = dictionnaire.dico.inverse().get(predicate);
+                    dictionnaire.dico.put(key++, predicate);
                 }
 
                 // Si l'objet est déjà présent dans le dictionnaire, on ne le rajoute pas et on
                 // récupère ça position (entier associé au string)
                 if (!dictionnaire.dico.containsValue(object)) {
-                    keyObject = key;
-                    dictionnaire.dico.put(key++, st.getObject().toString());
-                } else {
-                    keyObject = dictionnaire.dico.inverse().get(predicate);
+                    dictionnaire.dico.put(key++, object);
                 }
 
                 // Ajout des 3 clefs qui représente le statement dans l'index
-                index.add(keySubject, keyPredicate, keyObject);
+                index.add(dictionnaire.dico.inverse().get(subject), dictionnaire.dico.inverse().get(predicate),
+                        dictionnaire.dico.inverse().get(object));
 
                 // System.out.println("SPO : "+keySubject + " " + keyPredicate + " " +
                 // keyObject);
