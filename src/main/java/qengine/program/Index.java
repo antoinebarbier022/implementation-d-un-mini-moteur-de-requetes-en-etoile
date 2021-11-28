@@ -30,17 +30,49 @@ enum TypeIndex {
     }
 }
 
+// la classe Index contient 6 types d'index et des triplet
 public class Index {
 
-    // la classe Index contient 6 types d'index
-    public HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> indexes;
+    private int nbIndex = 0; // Nombre de ligne dans l'index
+    private int t_export = 0; // Temps d'exportation du dictionnaire
 
-    // Constructeur
+    protected HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> indexes;
+
+    /**
+     * Constructeur
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public Index() throws FileNotFoundException, IOException {
         indexes = new HashMap<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>>();
     }
 
-    // Ajout d'un statement dans les Indexes
+    /* Getters */
+
+    /**
+     * @return Nombre de ligne dans l'index
+     */
+    public int getNbIndex() {
+        return this.nbIndex;
+    }
+
+    /**
+     * @return Temps d'exportation du dictionnaire
+     */
+    public int getExportTime() {
+        return this.t_export;
+    }
+
+    /* Méthodes */
+
+    /**
+     * Méthode d'ajout d'un triplet RDF dans l'index
+     * 
+     * @param subject
+     * @param predicate
+     * @param object
+     */
     public void add(int subject, int predicate, int object) {
 
         int[] positionElement;
@@ -84,10 +116,19 @@ public class Index {
                 indexes.get(type).put(firstElement, secondAndThird);
             }
 
+            // On compte le nombre d'index créer
+            this.nbIndex++;
         }
     }
 
+    /**
+     * Méthode d'exportation de l'index
+     * 
+     * @param outputDir Dossier dans lequel le fichier index sera enregistré
+     * @throws Exception
+     */
     public void export(String outputDir) throws Exception {
+        long startRecordExportIndexTime = System.currentTimeMillis();
         String filename = "Index.txt";
         String path = outputDir + filename;
 
@@ -123,20 +164,16 @@ public class Index {
                 fw.write("\n=========\n");
 
             }
-            /*
-             * for (Map.Entry<Integer, Map<Integer, ArrayList<Integer>>> t :
-             * triplet.entrySet()) { for (Map.Entry<Integer, ArrayList<Integer>> tt :
-             * t.getValue().entrySet()) { for (Integer ttt : tt.getValue()) { bf.write("(" +
-             * t.getKey() + "," + tt.getKey() + "," + ttt + ")"); bf.newLine();
-             * 
-             * } } }
-             */
+
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
             throw new Exception("Erreur export index : Problème lors de l'écriture dans le fichier : " + filename);
         }
 
+        // temps d'export
+        long endRecordExportIndexTime = System.currentTimeMillis();
+        t_export = (int) (endRecordExportIndexTime - startRecordExportIndexTime);
     }
 
 }

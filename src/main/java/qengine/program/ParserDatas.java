@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -15,7 +16,32 @@ import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
 public class ParserDatas {
 
+    private int tempsTotalParser = 0;
+    private int nbTripletsRDF = 0;
+    private ArrayList<Integer> tempsCreationIndexParRDF = new ArrayList<Integer>();
+    private ArrayList<Integer> tempsCreationDicoParRDF = new ArrayList<Integer>();
+
+    /**
+     * 
+     * @return Nombre de triplets RDF dans le fichier data
+     */
+    public int getNombreTripletsRDF() {
+        return this.nbTripletsRDF;
+    }
+
+    /**
+     * Constructeur
+     * 
+     * @param dataFile     : emplacement du fichier data
+     * @param dictionnaire
+     * @param index
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     ParserDatas(String dataFile, Dictionnaire dictionnaire, Index index) throws FileNotFoundException, IOException {
+
+        // Début du parsing
+        long startTotalTime = System.currentTimeMillis();
 
         try (Reader dataReader = new FileReader(dataFile)) {
             // On va parser des données au format ntriples
@@ -39,10 +65,16 @@ public class ParserDatas {
             // retrouver plus rapidement
             for (Statement st : model) {
 
+                // On compte le nombre de tripplet RDF
+                nbTripletsRDF++;
+
                 // Sujet, Prédicat, Objet
                 subject = st.getSubject().stringValue();
                 predicate = st.getPredicate().stringValue();
                 object = st.getObject().stringValue();
+
+                // Début de l'enregistrement dans le dictionnaire
+                long startDicoTime = System.currentTimeMillis();
 
                 // Première étape : On ajoute la donnée dans le dictionnaire
                 // Deuxième étape : On ajoute les données (s, p, o) dans l'index
@@ -65,15 +97,67 @@ public class ParserDatas {
                     dictionnaire.dico.put(key++, object);
                 }
 
+                // fin de l'enregistrement dans le dictionnaire
+                long endDicoTime = System.currentTimeMillis();
+
+                // On ajoute le temps de création de la ligne RDF dans le dico
+                tempsCreationDicoParRDF.add((int) (endDicoTime - startDicoTime));
+
                 // Ajout des 3 clefs qui représente le statement dans l'index
+                long startIndexTime = System.currentTimeMillis(); // début enregistrement dans l'index
                 index.add(dictionnaire.dico.inverse().get(subject), dictionnaire.dico.inverse().get(predicate),
                         dictionnaire.dico.inverse().get(object));
+                long endIndexTime = System.currentTimeMillis(); // fin enregistrement dans l'index
 
-                // System.out.println("SPO : "+keySubject + " " + keyPredicate + " " +
-                // keyObject);
-
+                // On ajoute le temps de création de l'index pour ce RDF
+                tempsCreationIndexParRDF.add((int) (endIndexTime - startIndexTime));
             }
         }
 
+        // Fin du parsing
+        long endTotalTime = System.currentTimeMillis();
+
+        // Temps total qui comprend :
+        // lecture des données + creation dico + création index
+        this.tempsTotalParser = (int) (endTotalTime - startTotalTime);
     }
+
+    // Le temps de création de l'index est le temps total du parser (qui comprend
+    // lecture des données + creation dico + création index) auquelle on lui enleve
+    // le temps de lecture et le temps de création de l'index
+
+    /**
+     * 
+     * @return somme du temps de chaque ajout de RDF dans l'index
+     */
+    public int getTempsCreationIndex() {
+        return tempsCreationIndexParRDF.stream().reduce(0, Integer::sum);
+    }
+
+    /**
+     * 
+     * @return somme du temps de chaque ajout de RDF dans le dico
+     */
+    public int getTempsCreationDico() {
+        return tempsCreationDicoParRDF.stream().reduce(0, Integer::sum);
+    }
+
+    /**
+     * 
+     * @return le temps de lecture est le temps total moins celui de la création du
+     *         dico et de l'index
+     */
+    public int getTempsLecture() {
+        return getTempsTotalParserData() - (getTempsCreationIndex() + getTempsCreationDico());
+    }
+
+    /**
+     * 
+     * @return Temps total qui comprend : lecture des données + creation dico +
+     *         création index
+     */
+    public int getTempsTotalParserData() {
+        return tempsTotalParser;
+    }
+
 }

@@ -38,78 +38,84 @@ final class Main {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		System.out.println("\n============= Warnings & Errors =============");
+		DataInformations infos;
 
 		// On passe les différents fichiers en arguments
 		if (args.length < 3) {
+			System.out.println("\n============= Warnings & Errors =============");
 			throw new Exception(
 					"Erreur : Vous devez saisir les options de la façon suivante : qengine <queryFile> <dataFile> <restultFile> ");
 		} else {
-			queryFile = args[0];
-			dataFile = args[1];
-			resultFile = args[2];
+			// On place les noms des chemins vers les fichiers
+			// args[0] : chemin queries
+			// args[1] : chemin datas
+			// args[2] : chemin résultats
+			infos = new DataInformations(args[0], args[1], args[2]);
 		}
-
-		// Création du dictionnaire vide
-		Dictionnaire dictionnaire = new Dictionnaire();
-		// Création d'un index vide
-		Index index = new Index();
-
-		// On parse le fichier des données et on remplie le dictionnaire et l'index
-		long startRecordDataParserTime = System.currentTimeMillis();
-		new ParserDatas(dataFile, dictionnaire, index);
-		long endRecordDataParserTime = System.currentTimeMillis();
-
-		// On exporte le dictionnaire dans un fichier
-		long startRecordExportDicoTime = System.currentTimeMillis();
-		dictionnaire.export(resultFile);
-		long endRecordExportDicoTime = System.currentTimeMillis();
-
-		// On exporte l'index dans un fichier
-		long startRecordExportIndexTime = System.currentTimeMillis();
-		index.export(resultFile);
-		long endRecordExportIndexTime = System.currentTimeMillis();
-
-		// On Parse les requêtes
-		long startRecordParsingRequestTime = System.currentTimeMillis();
-		ParserQueries requests = new ParserQueries(queryFile, dictionnaire, index);
-		long endRecordParsingRequestTime = System.currentTimeMillis();
-
-		// On exporte les requetes
-		long startRecordExportRequestTime = System.currentTimeMillis();
-		requests.export(resultFile, dictionnaire);
-		long endRecordExportRequestTime = System.currentTimeMillis();
 
 		System.out.println("\n============= Début =============");
 
-		int temps_calcule_dic_et_index = (int) (endRecordDataParserTime - startRecordDataParserTime);
-		int temps_calcule_requetes = (int) (endRecordParsingRequestTime - startRecordParsingRequestTime);
-		int temps_calcule_total = temps_calcule_dic_et_index + temps_calcule_requetes;
-
-		System.out.println("Temps d'executions (calcule):");
-		System.out.println("\tDictionnaire + Index : \t" + temps_calcule_dic_et_index + " ms");
-		System.out.println("\tRequêtes : \t\t" + temps_calcule_requetes + " ms");
-		System.out.println("\tTotal calcules : \t" + temps_calcule_total + " ms");
+		// Création du dictionnaire vide et de l'index vide
+		Dictionnaire dictionnaire = new Dictionnaire();
+		Index index = new Index();
 
 		System.out.println();
+		System.out.println("[Lecture des données]\t\t -> en cours ...\n");
 
-		int temps_export_dic = (int) (endRecordExportDicoTime - startRecordExportDicoTime);
-		int temps_export_index = (int) (endRecordExportIndexTime - startRecordExportIndexTime);
-		int temps_export_requetes = (int) (endRecordExportRequestTime - startRecordExportRequestTime);
-		int temps_export_total = temps_export_dic + temps_export_index + temps_export_requetes;
-
-		System.out.println("Temps des exports (calcule):");
-		System.out.println("\tExport dictionnaire : \t" + temps_export_dic + " ms");
-		System.out.println("\tExport index : \t\t" + temps_export_index + " ms");
-		System.out.println("\tExport requêtes : \t" + temps_export_requetes + " ms");
-		System.out.println("\tTotal exports : \t" + temps_export_total + " ms");
+		// On parse le fichier des données et on remplie le dictionnaire et l'index
+		ParserDatas parserDatas = new ParserDatas(infos.getDataPathFile(), dictionnaire, index);
 
 		System.out.println();
+		System.out.println("[Création du dictionnaire]\t -> ok");
+		System.out.println("[Création de l'index]\t\t -> ok");
 
-		int temps_total = temps_calcule_total + temps_export_total;
+		System.out.println();
+		System.out.println("[Lecture des requêtes]\t\t -> en cours ...");
 
-		System.out.println("Temps total (calcules + exports):");
-		System.out.println("\tTotal : " + temps_total + " ms");
+		// On Parse les requêtes et on leurs trouve des résultats
+		ParserQueries parserQueries = new ParserQueries(infos.getQueryPathFile(), dictionnaire, index);
+
+		System.out.println();
+		System.out.println("[Solution des requêtes]\t\t -> ok");
+
+		// On récupère les nombre pour les mettre dans la classe DataInformation
+		infos.setNbRequetes(parserQueries.getNombreRequetes()); // nombre de requête
+		infos.setNbTripletsRDF(parserDatas.getNombreTripletsRDF()); // nombre de triplets RDF
+		infos.setNbIndex(index.getNbIndex()); // nombre d'index
+
+		// On récupère les temps pour les mettre dans la classs DataInformation
+		infos.setTimeCreationDico(parserDatas.getTempsCreationDico()); // temps dico
+		infos.setTimeCreationIndex(parserDatas.getTempsCreationIndex()); // temps index
+		infos.setTimeLectureDatas(parserDatas.getTempsLecture()); // temps lecture datas
+		infos.setTimeLectureQueries(parserQueries.getTempsLecture()); // temps lecture requêtes
+		infos.setTimeWorkloadQueries(parserQueries.getTempsWorkloadQueries()); // temps pour trouvé la solution des
+																				// requêtes
+
+		System.out.println();
+		System.out.println("[Exportation des résultats]\t -> en cours");
+
+		// On exporte les requêtes, le dictionnaire et l'index dans leurs fichiers
+		// respectifs
+		parserQueries.export(infos.getResultPathFolder(), dictionnaire);
+		dictionnaire.export(infos.getResultPathFolder());
+		index.export(infos.getResultPathFolder());
+
+		System.out.println();
+		System.out.println("[Exportation des résultats]\t -> ok");
+
+		// On recupére les temps des exports pour les mettre dans la classe
+		// DataInformation
+		infos.setTimeExportDico(dictionnaire.getExportTime());
+		infos.setTimeExportIndex(index.getExportTime());
+		infos.setTimeExportQueries(parserQueries.getExportTime());
+
+		System.out.println("\n============= Informations Données =============\n");
+
+		// On affiche les informations des données sur la sortie standard
+		infos.affichage();
+
+		// On exporte les informations des données dans le fichier csv "Information.csv"
+		infos.export("Informations");
 
 		System.out.println("\n============= Fin =============\n");
 

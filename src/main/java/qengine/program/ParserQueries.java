@@ -13,25 +13,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.rdf4j.model.Value;
-//import org.eclipse.rdf4j.query.algebra.Projection;
 import org.eclipse.rdf4j.query.algebra.StatementPattern;
-//import org.eclipse.rdf4j.query.algebra.helpers.AbstractQueryModelVisitor;
 import org.eclipse.rdf4j.query.algebra.helpers.StatementPatternCollector;
 import org.eclipse.rdf4j.query.parser.ParsedQuery;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 
 public class ParserQueries {
 
-    HashMap<String, ArrayList<Integer>> requetesResultats;
+    private int tempsTotalParser;
+    private int t_export = 0;
+    private ArrayList<Integer> tempsResolutionParPattern = new ArrayList<Integer>();
+    private HashMap<String, ArrayList<Integer>> requetesResultats;
 
     /**
-     * Traite chaque requête lue dans {@link #queryFile} avec
+     * Traite chaque requête lue dans {@link #str_queryFile} avec
      * {@link #processAQuery(ParsedQuery)}.
      * 
      * @throws Exception
      */
     public ParserQueries(String queryFile, Dictionnaire dictionnaire, Index index) throws Exception {
-
+        long startTotalTime = System.currentTimeMillis();
         requetesResultats = new HashMap<String, ArrayList<Integer>>();
         /**
          * Try-with-resources
@@ -67,7 +68,32 @@ public class ParserQueries {
                 }
             }
         }
+
+        long endTotalTime = System.currentTimeMillis();
+        // Temps total qui comprend :
+        // lecture des données + creation dico + création index
+        this.tempsTotalParser = (int) (endTotalTime - startTotalTime);
     }
+
+    /* =========== Getters =========== */
+
+    /**
+     * 
+     * @return Nombre total de requêtes
+     */
+    public int getNombreRequetes() {
+        return requetesResultats.size();
+    }
+
+    /**
+     * 
+     * @return Temps d'importation de la solution des requêtes
+     */
+    public int getExportTime() {
+        return this.t_export;
+    }
+
+    /* =========== Methodes =========== */
 
     /**
      * Méthode utilisée ici lors du parsing de requête sparql pour agir sur l'objet
@@ -80,9 +106,9 @@ public class ParserQueries {
 
         HashMap<Integer, ArrayList<Integer>> resulatsRequete = new HashMap<Integer, ArrayList<Integer>>();
 
-        System.out.println("======");
+        // System.out.println("======");
         // Affichage de la requête
-        System.out.println(query.getSourceString());
+        // System.out.println(query.getSourceString());
         int P, O, S;
 
         int numPattern = 1;
@@ -100,6 +126,7 @@ public class ParserQueries {
             O = -1;
             S = -1;
 
+            long startPatternTime = System.currentTimeMillis();
             try {
 
                 if (subject == null) {
@@ -119,7 +146,7 @@ public class ParserQueries {
                         }
 
                     } catch (Exception e) {
-                        System.out.println("Introuvable ");
+                        // System.out.println("Introuvable ");
                     }
 
                     // System.out.println("resultat patern : " + resultatsPattern);
@@ -158,19 +185,24 @@ public class ParserQueries {
 
                 // Il y a eu une erreur donc cela signifie que la donnée n'est pas présente
                 resulatsRequete.put(numPattern, new ArrayList<Integer>());
-                System.out.println("Résultats pattern " + numPattern + " : " + 0);
+                // System.out.println("Résultats pattern " + numPattern + " : " + 0);
             } finally {
                 // on place la liste des résultats du pattern dans les résultats de la requète
                 if (resultatsPattern == null) {
                     // liste vide
                     resulatsRequete.put(numPattern, new ArrayList<Integer>());
-                    System.out.println("Résultats pattern " + numPattern + " : " + 0);
+                    // System.out.println("Résultats pattern " + numPattern + " : " + 0);
                 } else {
                     resulatsRequete.put(numPattern, resultatsPattern);
-                    System.out.println("Résultats pattern " + numPattern + " : " + resultatsPattern.size());
+                    // System.out.println("Résultats pattern " + numPattern + " : " +
+                    // resultatsPattern.size());
                 }
 
             }
+            long endPatternTime = System.currentTimeMillis();
+
+            // On ajoute le temps de resolution pour ce pattern
+            tempsResolutionParPattern.add((int) (endPatternTime - startPatternTime));
 
             // System.out.println(" -> SPO : (" + S + "," + P + "," + O + ",");
             // On passe au pattern suivant
@@ -192,14 +224,32 @@ public class ParserQueries {
         // On place la requete et sa réponse dans la structure
         requetesResultats.putIfAbsent(query.getSourceString(), res);
 
-        System.out.println("résultats " + res.size());
-        System.out.println();
+        // System.out.println("résultats " + res.size());
+        // System.out.println();
         // } catch (NullPointerException e) {
         // throw new Exception("ERROR : " + e);
         //
     }
 
+    // On fait la somme du temps de chaque ajout resolution de pattern pour avoir le
+    // temps pour trouvé toutes les solutions des requetes
+    public int getTempsWorkloadQueries() {
+        return tempsResolutionParPattern.stream().reduce(0, Integer::sum);
+    }
+
+    // le temps de lecture est le temps total moins celui des requetes
+    public int getTempsLecture() {
+        return getTempsTotalParserQueries() - this.getTempsWorkloadQueries();
+    }
+
+    // Temps total qui comprend :
+    // lecture des données + creation dico + création index
+    public int getTempsTotalParserQueries() {
+        return tempsTotalParser;
+    }
+
     public void export(String outputDir, Dictionnaire dictionnaire) throws Exception {
+        long startRecordExportRequestTime = System.currentTimeMillis();
         String filename = "Requetes.txt";
         String path = outputDir + filename;
 
@@ -233,6 +283,8 @@ public class ParserQueries {
             e.printStackTrace();
             throw new Exception("Erreur export requetes : Problème lors de l'écriture dans le fichier : " + filename);
         }
+        long endRecordExportRequestTime = System.currentTimeMillis();
+        t_export = (int) (endRecordExportRequestTime - startRecordExportRequestTime);
     }
 
 }

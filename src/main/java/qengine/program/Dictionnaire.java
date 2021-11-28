@@ -15,6 +15,7 @@ public class Dictionnaire {
     // - clef-valeur et valeur-clef
     // On a donc fait le choix d'utiliser la structure BiMap qui permet de le faire
     public BiMap<Integer, String> dico;
+    private int t_export = 0; // Temps d'exportation du dictionnaire
 
     /**
      * Construction d'un dictionnaire
@@ -27,14 +28,33 @@ public class Dictionnaire {
         dico = HashBiMap.create();
     }
 
-    // Récupère un élément du dictionnaire à partir de la valeur
+    /* =========== Getters =========== */
+
+    /**
+     * Getter
+     * 
+     * @return Le temps d'exportation du dictionnaire
+     */
+    public int getExportTime() {
+        return this.t_export;
+    }
+
+    /**
+     * Récupère un élément du dictionnaire à partir de la valeur
+     * 
+     * @param value
+     * @return
+     */
     public int getKeyByValue(String value) {
         return this.dico.inverse().get(value);
     }
 
+    /* =========== Méthodes =========== */
+
     // Méthode pour exporter le dictionnaire dans un fichier nommé Dictionnaire.txt
     // situé dans le dossier souhaité
     public void export(String outputDir) throws Exception {
+        long startRecordExportDicoTime = System.currentTimeMillis();
         String filename = "Dictionnaire.txt";
         String path = outputDir + filename;
 
@@ -53,6 +73,8 @@ public class Dictionnaire {
             throw new Exception(
                     "Erreur export dictionnaire : Problème lors de l'écriture dans le fichier : " + filename);
         }
+        long endRecordExportDicoTime = System.currentTimeMillis();
+        t_export = (int) (endRecordExportDicoTime - startRecordExportDicoTime);
     }
 
     @Override
