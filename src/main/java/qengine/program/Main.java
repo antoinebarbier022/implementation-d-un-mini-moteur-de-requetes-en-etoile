@@ -44,7 +44,7 @@ final class Main {
 		if (args.length < 3) {
 			System.out.println("\n============= Warnings & Errors =============");
 			throw new Exception(
-					"Erreur : Vous devez saisir les options de la façon suivante : qengine <queryFile> <dataFile> <restultFile> ");
+					"Erreur : Vous devez saisir les options de la façon suivante : qengine <queryFile> <dataFile> <restultFolder> ");
 		} else {
 			// On place les noms des chemins vers les fichiers
 			// args[0] : chemin queries

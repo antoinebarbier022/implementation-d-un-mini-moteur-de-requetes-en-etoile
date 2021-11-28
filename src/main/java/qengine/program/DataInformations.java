@@ -32,10 +32,10 @@ public class DataInformations {
     private int nb_index = 0;
 
     // Constructeur
-    public DataInformations(String queryFile, String dataFile, String resultFile) {
+    public DataInformations(String queryFile, String dataFile, String resultFolder) {
         this.str_queryPathFile = queryFile;
         this.str_dataPathFile = dataFile;
-        this.str_resultPathFolder = resultFile;
+        this.str_resultPathFolder = resultFolder;
     }
 
     // getters des noms fichier et dossier

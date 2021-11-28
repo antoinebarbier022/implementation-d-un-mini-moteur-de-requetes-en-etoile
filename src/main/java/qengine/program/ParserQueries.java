@@ -122,9 +122,6 @@ public class ParserQueries {
             Value subject = pattern.getSubjectVar().getValue();
             Value predicate = pattern.getPredicateVar().getValue();
             Value object = pattern.getObjectVar().getValue();
-            P = -1;
-            O = -1;
-            S = -1;
 
             long startPatternTime = System.currentTimeMillis();
             try {
@@ -213,22 +210,16 @@ public class ParserQueries {
         // résultats des paterns
         ArrayList<Integer> res = resulatsRequete.get(1);
 
+        // Intersection des resultats
         for (int i = 1; i < resulatsRequete.size(); i++) {
             res.retainAll(resulatsRequete.get(i));
         }
-
         for (int i = resulatsRequete.size(); i >= 1; i--) {
             res.retainAll(resulatsRequete.get(i));
         }
 
         // On place la requete et sa réponse dans la structure
         requetesResultats.putIfAbsent(query.getSourceString(), res);
-
-        // System.out.println("résultats " + res.size());
-        // System.out.println();
-        // } catch (NullPointerException e) {
-        // throw new Exception("ERROR : " + e);
-        //
     }
 
     // On fait la somme du temps de chaque ajout resolution de pattern pour avoir le
