@@ -11,4 +11,4 @@ Pour lancer le programme, suivre les étapes suivantes:
     ```
     "args": "data/sample_query.queryset data/sample_data.nt output/output.txt"
     ```
-+ Eclipse : 
++ Eclipse : Configurer le RUN, java application > Main, et placer les options dans program arguments. 
