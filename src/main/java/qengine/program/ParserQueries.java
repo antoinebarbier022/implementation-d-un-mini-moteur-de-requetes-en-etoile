@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.stream.Stream;
-
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -244,8 +244,13 @@ public class ParserQueries {
         String filename = "Requetes.txt";
         String path = outputDir + filename;
 
+        File directory = new File(outputDir);
         FileWriter fw = null;
         try {
+            // création du dossier s'il n'existe pas
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
             fw = new FileWriter(path);
         } catch (IOException e) {
             e.printStackTrace();
