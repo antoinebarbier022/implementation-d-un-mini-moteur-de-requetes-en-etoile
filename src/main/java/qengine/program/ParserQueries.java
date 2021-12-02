@@ -22,6 +22,7 @@ public class ParserQueries {
 
     private int tempsTotalParser;
     private int t_export = 0;
+    private int nbQueriesWithZeroResult = 0;
     private ArrayList<Integer> tempsResolutionParPattern = new ArrayList<Integer>();
     private HashMap<String, ArrayList<Integer>> requetesResultats;
 
@@ -83,6 +84,14 @@ public class ParserQueries {
      */
     public int getNombreRequetes() {
         return requetesResultats.size();
+    }
+
+    /**
+     * 
+     * @return Nombre de requetes avec zero resultat
+     */
+    public int getNombreRequetesAvecZeroResultat() {
+        return this.nbQueriesWithZeroResult;
     }
 
     /**
@@ -208,7 +217,7 @@ public class ParserQueries {
 
         // Maintenant pour obtenir le resultat final on fait l'intersection des
         // résultats des paterns
-        ArrayList<Integer> res = resulatsRequete.get(1);
+        ArrayList<Integer> res = resulatsRequete.get(0);
 
         // Intersection des resultats
         for (int i = 1; i < resulatsRequete.size(); i++) {
@@ -220,6 +229,11 @@ public class ParserQueries {
 
         // On place la requete et sa réponse dans la structure
         requetesResultats.putIfAbsent(query.getSourceString(), res);
+
+        // Si on a zero resultat on incrémente la variable
+        if (res.size() == 0) {
+            nbQueriesWithZeroResult++;
+        }
     }
 
     // On fait la somme du temps de chaque ajout resolution de pattern pour avoir le

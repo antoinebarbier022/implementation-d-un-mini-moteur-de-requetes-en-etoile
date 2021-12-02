@@ -30,6 +30,7 @@ public class DataInformations {
     private int nb_queries = 0;
     private int nb_tripletRDF = 0;
     private int nb_index = 0;
+    private int nb_requetes_zero_result = 0;
 
     // Constructeur
     public DataInformations(String queryFile, String dataFile, String resultFolder) {
@@ -62,6 +63,10 @@ public class DataInformations {
 
     public void setNbIndex(int nb) {
         this.nb_index = nb;
+    }
+
+    public void setNbRequetesZeroResult(int nb) {
+        this.nb_requetes_zero_result = nb;
     }
 
     // setters des temps de calcule et lecture
@@ -122,6 +127,10 @@ public class DataInformations {
      * Méthode qui affiche les données sur la sortie standard
      */
     public void affichage() {
+
+        System.out.println();
+        System.out.println("Statistique :");
+        System.out.println("\tNombre de requêtes avec zero résultat :" + this.nb_requetes_zero_result);
 
         System.out.println("Temps de lectures (" + this.getTemps_lecture_total() + " ms)");
         System.out.println("\tLecture des données: \t" + this.t_lectureDatas + " ms");
