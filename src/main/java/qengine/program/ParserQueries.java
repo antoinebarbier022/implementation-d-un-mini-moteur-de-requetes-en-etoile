@@ -24,7 +24,9 @@ public class ParserQueries {
     private int t_export = 0;
     private int nbQueriesWithZeroResult = 0;
     private ArrayList<Integer> tempsResolutionParPattern = new ArrayList<Integer>();
-    private HashMap<String, ArrayList<Integer>> requetesResultats;
+    private HashMap<Integer, HashMap<String, ArrayList<Integer>>> requetesResultats;
+
+    int numRequetes = 0;
 
     /**
      * Traite chaque requête lue dans {@link #str_queryFile} avec
@@ -34,7 +36,7 @@ public class ParserQueries {
      */
     public ParserQueries(String queryFile, Dictionnaire dictionnaire, Index index) throws Exception {
         long startTotalTime = System.currentTimeMillis();
-        requetesResultats = new HashMap<String, ArrayList<Integer>>();
+        requetesResultats = new HashMap<Integer, HashMap<String, ArrayList<Integer>>>();
         /**
          * Try-with-resources
          * 
@@ -214,10 +216,12 @@ public class ParserQueries {
             // On passe au pattern suivant
             numPattern++;
         }
+        numRequetes++;
 
         // Maintenant pour obtenir le resultat final on fait l'intersection des
         // résultats des paterns
-        ArrayList<Integer> res = resulatsRequete.get(0);
+        // Le premier pattern est le numéro 1 donc on ce base sur lui
+        ArrayList<Integer> res = resulatsRequete.get(1);
 
         // Intersection des resultats
         for (int i = 1; i < resulatsRequete.size(); i++) {
@@ -228,7 +232,9 @@ public class ParserQueries {
         }
 
         // On place la requete et sa réponse dans la structure
-        requetesResultats.putIfAbsent(query.getSourceString(), res);
+        HashMap<String, ArrayList<Integer>> result = new HashMap<String, ArrayList<Integer>>();
+        result.put(query.getSourceString(), res);
+        requetesResultats.put(numRequetes, result);
 
         // Si on a zero resultat on incrémente la variable
         if (res.size() == 0) {
@@ -272,18 +278,18 @@ public class ParserQueries {
         }
         try {
             fw.write(this.toString());
-            int numRequest = 0;
-            for (Map.Entry<String, ArrayList<Integer>> mapentry : requetesResultats.entrySet()) {
-                fw.write("\n==== Requête n°" + (++numRequest) + " =======================\n");
+            for (Map.Entry<Integer, HashMap<String, ArrayList<Integer>>> mapentry : requetesResultats.entrySet()) {
+                fw.write("\n==== Requête n°" + mapentry.getKey() + " =======================\n");
                 // Requete
                 fw.write("\n");
-                fw.write(mapentry.getKey().replace("{", "{\n").replace(" .	", " .\n	"));
+                fw.write(mapentry.getValue().entrySet().iterator().next().getKey().replace("{", "{\n").replace(" .	",
+                        " .\n	"));
                 fw.write("\n\n");
 
                 fw.write("\n\n");
-                fw.write("Résultats (" + mapentry.getValue().size() + ") \n");
+                fw.write("Résultats (" + mapentry.getValue().entrySet().iterator().next().getValue().size() + ") \n");
 
-                for (Integer i : mapentry.getValue()) {
+                for (Integer i : mapentry.getValue().entrySet().iterator().next().getValue()) {
                     fw.write(" - " + dictionnaire.dico.get(i).toString() + "\n");
                 }
 

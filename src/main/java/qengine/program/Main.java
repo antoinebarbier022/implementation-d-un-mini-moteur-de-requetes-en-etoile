@@ -82,6 +82,7 @@ final class Main {
 		infos.setNbRequetes(parserQueries.getNombreRequetes()); // nombre de requête
 		infos.setNbTripletsRDF(parserDatas.getNombreTripletsRDF()); // nombre de triplets RDF
 		infos.setNbIndex(index.getNbIndex()); // nombre d'index
+		infos.setNbRequetesZeroResult(parserQueries.getNombreRequetesAvecZeroResultat());
 
 		// On récupère les temps pour les mettre dans la classs DataInformation
 		infos.setTimeCreationDico(parserDatas.getTempsCreationDico()); // temps dico

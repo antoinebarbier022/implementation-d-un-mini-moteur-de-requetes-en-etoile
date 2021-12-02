@@ -129,8 +129,10 @@ public class DataInformations {
     public void affichage() {
 
         System.out.println();
-        System.out.println("Statistique :");
-        System.out.println("\tNombre de requêtes avec zero résultat :" + this.nb_requetes_zero_result);
+        System.out.println("Statistiques :");
+        System.out.println("\tNB requêtes zero résultat : " + this.nb_requetes_zero_result + "/" + this.nb_queries);
+
+        System.out.println();
 
         System.out.println("Temps de lectures (" + this.getTemps_lecture_total() + " ms)");
         System.out.println("\tLecture des données: \t" + this.t_lectureDatas + " ms");
