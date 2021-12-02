@@ -187,10 +187,10 @@ public class ParserQueries {
                 // on place la liste des résultats du pattern dans les résultats de la requète
                 if (resultatsPattern == null) {
                     // liste vide
-                    resulatsRequete.put(numPattern, new ArrayList<Integer>());
+                    resulatsRequete.putIfAbsent(numPattern, new ArrayList<Integer>());
                     // System.out.println("Résultats pattern " + numPattern + " : " + 0);
                 } else {
-                    resulatsRequete.put(numPattern, resultatsPattern);
+                    resulatsRequete.putIfAbsent(numPattern, resultatsPattern);
                     // System.out.println("Résultats pattern " + numPattern + " : " +
                     // resultatsPattern.size());
                 }
