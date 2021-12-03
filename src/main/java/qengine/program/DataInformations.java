@@ -31,6 +31,7 @@ public class DataInformations {
     private int nb_tripletRDF = 0;
     private int nb_index = 0;
     private int nb_requetes_zero_result = 0;
+    private int nb_requetes_doublons = 0;
 
     // Constructeur
     public DataInformations(String queryFile, String dataFile, String resultFolder) {
@@ -67,6 +68,10 @@ public class DataInformations {
 
     public void setNbRequetesZeroResult(int nb) {
         this.nb_requetes_zero_result = nb;
+    }
+
+    public void setNbRequetesDoublons(int nb) {
+        this.nb_requetes_doublons = nb;
     }
 
     // setters des temps de calcule et lecture
@@ -131,6 +136,7 @@ public class DataInformations {
         System.out.println();
         System.out.println("Statistiques :");
         System.out.println("\tNB requêtes zero résultat : " + this.nb_requetes_zero_result + "/" + this.nb_queries);
+        System.out.println("\tNB de requêtes doublons  : " + this.nb_requetes_doublons + "/" + this.nb_queries);
 
         System.out.println();
 

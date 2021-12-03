@@ -25,6 +25,9 @@ public class ParserQueries {
     private int nbQueriesWithZeroResult = 0;
     private ArrayList<Integer> tempsResolutionParPattern = new ArrayList<Integer>();
     private HashMap<Integer, HashMap<String, ArrayList<Integer>>> requetesResultats;
+    private HashMap<String, String> requetesDistinct = new HashMap<String, String>(); // utiliser pour connaitre le
+                                                                                      // nombre de
+    // doublons
 
     int numRequetes = 0;
 
@@ -236,6 +239,9 @@ public class ParserQueries {
         result.put(query.getSourceString(), res);
         requetesResultats.put(numRequetes, result);
 
+        // On remplie cette structure pour connaitre le nombre de doublons
+        requetesDistinct.put(query.getSourceString(), "");
+
         // Si on a zero resultat on incrémente la variable
         if (res.size() == 0) {
             nbQueriesWithZeroResult++;
@@ -257,6 +263,10 @@ public class ParserQueries {
     // lecture des données + creation dico + création index
     public int getTempsTotalParserQueries() {
         return tempsTotalParser;
+    }
+
+    public int getNbRequetesDoublons() {
+        return this.numRequetes - this.requetesDistinct.size();
     }
 
     public void export(String outputDir, Dictionnaire dictionnaire) throws Exception {

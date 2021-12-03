@@ -82,7 +82,9 @@ final class Main {
 		infos.setNbRequetes(parserQueries.getNombreRequetes()); // nombre de requête
 		infos.setNbTripletsRDF(parserDatas.getNombreTripletsRDF()); // nombre de triplets RDF
 		infos.setNbIndex(index.getNbIndex()); // nombre d'index
-		infos.setNbRequetesZeroResult(parserQueries.getNombreRequetesAvecZeroResultat());
+		infos.setNbRequetesZeroResult(parserQueries.getNombreRequetesAvecZeroResultat()); // nombre de requetes avec 0
+																							// resultats
+		infos.setNbRequetesDoublons(parserQueries.getNbRequetesDoublons()); // nombre de doublons
 
 		// On récupère les temps pour les mettre dans la classs DataInformation
 		infos.setTimeCreationDico(parserDatas.getTempsCreationDico()); // temps dico
