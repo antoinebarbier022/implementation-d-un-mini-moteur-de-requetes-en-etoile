@@ -1,36 +1,17 @@
 package qengine.program;
 
 /**
- * Programme simple lisant un fichier de requête et un fichier de données.
  * 
- * <p>
- * Les entrées sont données ici de manière statique, à vous de programmer les
- * entrées par passage d'arguments en ligne de commande comme demandé dans
- * l'énoncé.
- * </p>
- * 
- * <p>
- * Le présent programme se contente de vous montrer la voie pour lire les
- * triples et requêtes depuis les fichiers ; ce sera à vous d'adapter/réécrire
- * le code pour finalement utiliser les requêtes et interroger les données. On
- * ne s'attend pas forcémment à ce que vous gardiez la même structure de code,
- * vous pouvez tout réécrire.
- * </p>
- * 
- * @author Olivier Rodriguez <olivier.rodriguez1@umontpellier.fr>
+ * @author Antoine Barbier <antoine.barbier01@etu.umontpellier.fr>
+ * @author Djamel Bennameur
  */
 final class Main {
-	static final String baseURI = null;
-	// ========================================================================
 
-	/**
-	 * Entrée du programme
-	 */
-	public static void main(String[] args) throws Exception {
+	enum MessageType {
+		LOADED, LOADING, ERROR, WARNING;
+	};
 
-		DataInformations infos;
-
-		// On passe les différents fichiers en arguments
+	private static void gestionDesOptions(String[] args, DataInformations infos) throws Exception {
 		// Si c'est impaire alors on a pas bien écrit les paramètres
 		if (args.length % 2 != 0) {
 			System.out.println("\n============= Warnings & Errors =============");
@@ -88,70 +69,106 @@ final class Main {
 				resultFolder = "output-" + nomDuFichierData.split("\\.")[0] + "-" + nomDuFichierQueries + "/";
 			}
 
-			infos = new DataInformations(queriesFile, dataFile, resultFolder);
+			infos.setDataFile(dataFile);
+			infos.setQueryFile(queriesFile);
+			infos.setResultFolder(resultFolder);
 		}
 
-		System.out.println("\n============= Début =============");
+	}
+
+	private static void print(MessageType type, String header, String body) {
+		// Début du message
+		switch (type) {
+			case ERROR:
+			case WARNING:
+				System.out.print(ConsoleColor.RED);
+				break;
+			case LOADED:
+				System.out.print(ConsoleColor.GREEN);
+				break;
+			case LOADING:
+				System.out.print(ConsoleColor.YELLOW);
+				break;
+			default:
+				System.out.print(ConsoleColor.RESET);
+				break;
+		}
+		System.out.print("[" + header + "] ");
+		System.out.print("\t -> \t");
+		System.out.print(body);
+		// Fin du message
+		System.out.print(ConsoleColor.RESET);
+		System.out.println();
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		DataInformations infos = new DataInformations();
+
+		// On gère les options passé dans le programme
+		gestionDesOptions(args, infos);
+
+		System.out.println("\n============= Début =============\n");
 
 		// Création du dictionnaire vide et de l'index vide
 		Dictionnaire dictionnaire = new Dictionnaire();
 		Index index = new Index();
 
-		System.out.println();
-		System.out.println("[Lecture des données]\t\t -> en cours ...\n");
-
 		// On parse le fichier des données et on remplie le dictionnaire et l'index
+		print(MessageType.LOADING, "Lecture des données", "en cours ...");
 		ParserDatas parserDatas = new ParserDatas(infos.getDataPathFile(), dictionnaire, index);
+		infos.setTimeLectureDatas(parserDatas.getTempsLecture()); // temps de lecture des datas
 
-		System.out.println();
-		System.out.println("[Création du dictionnaire]\t -> ok");
-		System.out.println("[Création de l'index]\t\t -> ok");
+		// Création du dictionnaire terminé
+		int tempsCreationDictionnaire = parserDatas.getTempsCreationDico();
+		infos.setTimeCreationDico(tempsCreationDictionnaire); // temps dico
+		infos.setNbTripletsRDF(parserDatas.getNombreTripletsRDF()); // nombre de triplets RDF
 
-		System.out.println();
-		System.out.println("[Lecture des requêtes]\t\t -> en cours ...");
+		print(MessageType.LOADED, "Création du dico", tempsCreationDictionnaire + " ms");
+
+		// Création de l'index terminé
+		int tempsCreationIndex = parserDatas.getTempsCreationIndex();
+		infos.setTimeCreationIndex(tempsCreationIndex); // temps index
+		infos.setNbIndex(index.getNbIndex()); // nombre d'index
+
+		print(MessageType.LOADED, "Création de l'index", tempsCreationIndex + " ms");
 
 		// On Parse les requêtes et on leurs trouve des résultats
+		print(MessageType.LOADING, "Lecture des requêtes", "en cours ...");
 		ParserQueries parserQueries = new ParserQueries(infos.getQueryPathFile(), dictionnaire, index);
-
-		System.out.println();
-		System.out.println("[Solution des requêtes]\t\t -> ok");
-
-		// On récupère les nombre pour les mettre dans la classe DataInformation
-		infos.setNbRequetes(parserQueries.getNombreRequetes()); // nombre de requête
-		infos.setNbTripletsRDF(parserDatas.getNombreTripletsRDF()); // nombre de triplets RDF
-		infos.setNbIndex(index.getNbIndex()); // nombre d'index
-		infos.setNbRequetesZeroResult(parserQueries.getNombreRequetesAvecZeroResultat()); // nombre de requetes avec 0
-																							// resultats
-		infos.setNbRequetesDoublons(parserQueries.getNbRequetesDoublons()); // nombre de doublons
-
-		// On récupère les temps pour les mettre dans la classs DataInformation
-		infos.setTimeCreationDico(parserDatas.getTempsCreationDico()); // temps dico
-		infos.setTimeCreationIndex(parserDatas.getTempsCreationIndex()); // temps index
-		infos.setTimeLectureDatas(parserDatas.getTempsLecture()); // temps lecture datas
 		infos.setTimeLectureQueries(parserQueries.getTempsLecture()); // temps lecture requêtes
+		infos.setNbRequetes(parserQueries.getNombreRequetes()); // nombre de requête
+		infos.setNbRequetesZeroResult(parserQueries.getNombreRequetesAvecZeroResultat()); // nombre de requetes avec 0
+		// resultats
+		infos.setNbRequetesDoublons(parserQueries.getNbRequetesDoublons()); // nombre de doublons
 		infos.setTimeWorkloadQueries(parserQueries.getTempsWorkloadQueries()); // temps pour trouvé la solution des
 																				// requêtes
 		infos.setNbRequetesConditions(parserQueries.getHashMapNbConditionsRequete());
 
-		System.out.println();
-		System.out.println("[Exportation des résultats]\t -> en cours");
+		print(MessageType.LOADED, "Solution des requêtes", "ok");
 
-		// On exporte les requêtes, le dictionnaire et l'index dans leurs fichiers
-		// respectifs
-		parserQueries.export(infos.getResultPathFolder(), dictionnaire);
-		dictionnaire.export(infos.getResultPathFolder());
-		index.export(infos.getResultPathFolder());
+		// Exportation du dictionnaire
 
-		System.out.println();
-		System.out.println("[Exportation des résultats]\t -> ok");
+		print(MessageType.LOADING, "Exportation du dictionnaire", "en cours ...");
+		dictionnaire.export(infos.getResultPathFolder()); // export dico
+		infos.setTimeExportDico(dictionnaire.getExportTime()); // temps d'exportation dico
 
-		// On recupére les temps des exports pour les mettre dans la classe
-		// DataInformation
-		infos.setTimeExportDico(dictionnaire.getExportTime());
-		infos.setTimeExportIndex(index.getExportTime());
-		infos.setTimeExportQueries(parserQueries.getExportTime());
+		// Exportation de l'index
+		System.out.print(ConsoleColor.YELLOW);
+		print(MessageType.LOADING, "Exportation de l'index", "en cours ...");
+		index.export(infos.getResultPathFolder()); // export index
+		infos.setTimeExportIndex(index.getExportTime()); // temps d'exportation indexs
 
-		System.out.println("\n============= Informations Données =============\n");
+		// Exportation des résultats des requêtes
+		print(MessageType.LOADING, "Exportation des requêtes", "en cours ...");
+		parserQueries.export(infos.getResultPathFolder(), dictionnaire); // export requetes
+		infos.setTimeExportQueries(parserQueries.getExportTime()); // temps exportations des requêtes
+
+		// Message exportation des résultats des requêtes terminé
+		print(MessageType.LOADING, "Exportation des résultats",
+				"exporté dans le dossier : " + infos.getResultPathFolder());
+
+		System.out.println("\n============= Informations sur l'exécution du programme =============");
 
 		// On affiche les informations des données sur la sortie standard
 		infos.affichage();

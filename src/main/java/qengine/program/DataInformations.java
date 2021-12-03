@@ -37,9 +37,25 @@ public class DataInformations {
     private HashMap<Integer, Integer> nb_requetesNbConditions = new HashMap<Integer, Integer>();
 
     // Constructeur
+    public DataInformations() {
+    }
+
     public DataInformations(String queryFile, String dataFile, String resultFolder) {
         this.str_queryPathFile = queryFile;
         this.str_dataPathFile = dataFile;
+        this.str_resultPathFolder = resultFolder;
+    }
+
+    // setters des fichier et dossiers
+    public void setQueryFile(String queryFile) {
+        this.str_queryPathFile = queryFile;
+    }
+
+    public void setDataFile(String dataFile) {
+        this.str_dataPathFile = dataFile;
+    }
+
+    public void setResultFolder(String resultFolder) {
         this.str_resultPathFolder = resultFolder;
     }
 
@@ -140,39 +156,49 @@ public class DataInformations {
      */
     public void affichage() {
 
+        String colorData = ConsoleColor.BLUE;
+        String colorReset = ConsoleColor.RESET;
+
         System.out.println();
         System.out.println("Statistiques :");
-        System.out.println("\tNB requêtes zero résultat : " + this.nb_requetes_zero_result + "/" + this.nb_queries);
-        System.out.println("\tNB de requêtes doublons  : " + this.nb_requetes_doublons + "/" + this.nb_queries);
-        System.out.println("\tNB requêtes avec les mêmes conditions : " + this.nb_requetesNbConditions);
+        System.out.println("\tNB requêtes zero résultat : " + colorData + this.nb_requetes_zero_result + "/"
+                + this.nb_queries + colorReset);
+        System.out.println(
+                "\tNB de requêtes doublons  : " + colorData + this.nb_requetes_doublons + "/" + this.nb_queries
+                        + colorReset);
+        System.out.println(
+                "\tNB requêtes avec les mêmes conditions : " + colorData + this.nb_requetesNbConditions + colorReset);
         for (Map.Entry<Integer, Integer> mapentry : this.nb_requetesNbConditions.entrySet()) {
-            System.out.println("\t - " + mapentry.getValue() + " requêtes avec " + mapentry.getKey() + " condition"
+            System.out.println("\t - " + colorData + mapentry.getValue() + colorReset + " requêtes avec "
+                    + mapentry.getKey() + " condition"
                     + (mapentry.getKey() == 1 ? "," : "s,"));
         }
 
         System.out.println();
 
-        System.out.println("Temps de lectures (" + this.getTemps_lecture_total() + " ms)");
-        System.out.println("\tLecture des données: \t" + this.t_lectureDatas + " ms");
-        System.out.println("\tLecture des requêtes: \t" + this.t_lectureQueries + " ms");
+        System.out
+                .println("Temps de lectures (" + colorData + this.getTemps_lecture_total() + " ms" + colorReset + ")");
+        System.out.println("\tLecture des données: \t" + colorData + this.t_lectureDatas + " ms" + colorReset);
+        System.out.println("\tLecture des requêtes: \t" + colorData + this.t_lectureQueries + " ms" + colorReset);
 
         System.out.println();
 
-        System.out.println("Temps de calcules (" + this.getTemps_calcule_total() + " ms)");
-        System.out.println("\tCréation Dictionnaire: \t" + this.t_creationDico + " ms");
-        System.out.println("\tCréation Index: \t" + this.t_creationIndex + " ms");
-        System.out.println("\tWorkload (requêtes) : \t" + this.t_workloadQueries + " ms");
+        System.out.println("Temps de calcules (" + colorData + this.getTemps_calcule_total() + " ms)" + colorReset);
+        System.out.println("\tCréation Dictionnaire: \t" + colorData + this.t_creationDico + " ms" + colorReset);
+        System.out.println("\tCréation Index: \t" + colorData + this.t_creationIndex + " ms" + colorReset);
+        System.out.println("\tWorkload (requêtes) : \t" + colorData + this.t_workloadQueries + " ms" + colorReset);
 
         System.out.println();
 
-        System.out.println("Temps des exports (" + this.getTemps_exports_total() + " ms)");
-        System.out.println("\tExport dictionnaire : \t" + this.t_exportDic + " ms");
-        System.out.println("\tExport index : \t\t" + this.t_exportIndex + " ms");
-        System.out.println("\tExport requêtes : \t" + this.t_exportQueries + " ms");
+        System.out
+                .println("Temps des exports (" + colorData + this.getTemps_exports_total() + " ms" + colorReset + ")");
+        System.out.println("\tExport dictionnaire : \t" + colorData + this.t_exportDic + " ms" + colorReset);
+        System.out.println("\tExport index : \t\t" + colorData + this.t_exportIndex + " ms" + colorReset);
+        System.out.println("\tExport requêtes : \t" + colorData + this.t_exportQueries + " ms" + colorReset);
 
         System.out.println();
 
-        System.out.println("Temps total du programme : " + this.getTemps_total() + " ms");
+        System.out.println("Temps total du programme : " + colorData + this.getTemps_total() + " ms" + colorReset);
     }
 
     /**
