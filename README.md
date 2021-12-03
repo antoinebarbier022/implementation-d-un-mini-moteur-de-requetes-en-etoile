@@ -4,18 +4,28 @@ Groupe : Antoine Barbier et Djamel Benameur
 
 Git : https://gitlab.com/An_toine/implementation-d-un-mini-moteur-de-requetes-en-etoile/
 
+---
 
+## Passer les options en paramètre
 Pour lancer le programme, suivre les étapes suivantes:
 
 Options du programme : 
 Soit on utilise l'option seul : ```clean```
+
 Soit on utilise la combinaison des options suivante :
 ```-queries <queryFile>``` : obligatoire
+
 ```-data <dataFile> ``` : obligatoire
+
 ```-output <restultFolder>``` : facultative
+
 Ainsi, on peut lancer le programme de la façon suivante :
 
-qengine -queries <queryFile> -data <dataFile> -output <restultFolder>
+```qengine -queries <queryFile> -data <dataFile> -output <restultFolder>```
+
+---
+
+## Exécuter le programme
 
 + VsCode : Modifier le fichier ```.vscode/launch.json```, placer les options dans "args" comme dans l'exemple suivant : 
     ```
