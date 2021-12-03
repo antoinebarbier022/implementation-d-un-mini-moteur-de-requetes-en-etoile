@@ -44,7 +44,7 @@ final class Main {
 		} else {
 			String queriesFile = "";// workingDir + "sample_query.queryset";
 			String dataFile = ""; // workingDir + "sample_data.nt";
-			String resultFolder = "output/";
+			String resultFolder = "";
 			// On place les noms des chemins vers les fichiers
 			for (int i = 0; i < args.length; i++) {
 				// alors c'est le nom de l'option
@@ -59,12 +59,10 @@ final class Main {
 						case "-output":
 							resultFolder = args[i + 1];
 							break;
-
 						default:
 							System.out.println("\n============= Warnings & Errors =============");
 							throw new Exception(
-									"Erreur : Option non valide \n");
-
+									"Erreur : Option <" + args[i].replace("-", "") + "> non valide \n");
 					}
 				}
 			}
@@ -78,6 +76,18 @@ final class Main {
 				throw new Exception(
 						"Erreur : Vous devez saisir le fichier de données. \n");
 			}
+
+			// On regarde si l'ouput est définie, si il ne l'est pas on lui attribue un
+			// dossier en fonction du fichier data et du fichier queries
+			if (resultFolder.isEmpty()) {
+				String[] queriesFileSplit = queriesFile.split("/");
+				String[] dataFileSplit = dataFile.split("/");
+				String nomDuFichierQueries = queriesFileSplit[queriesFileSplit.length - 1];
+				String nomDuFichierData = dataFileSplit[dataFileSplit.length - 1];
+
+				resultFolder = "output-" + nomDuFichierData.split("\\.")[0] + "-" + nomDuFichierQueries + "/";
+			}
+
 			infos = new DataInformations(queriesFile, dataFile, resultFolder);
 		}
 
