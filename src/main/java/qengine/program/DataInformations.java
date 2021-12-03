@@ -1,8 +1,13 @@
 package qengine.program;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /// class qui contient les données sur les temps de calcules, les noms des fichiers ...
@@ -220,22 +225,96 @@ public class DataInformations {
         try {
             // Pour une meilleur lisibilité du csv on a choisie de mettre les informations
             // sur deux colonnes plutot que de les mettres sur 2 lignes
-            fw.write("nom du fichier de données | " + this.str_dataPathFile + "\n");
-            fw.write("nom du dossier des requêtes | " + this.str_queryPathFile + "\n");
-            fw.write("nombre de triplets RDF | " + this.nb_tripletRDF + "\n");
-            fw.write("nombre de requêtes | " + this.nb_queries + "\n");
-            fw.write("nombre de requêtes doublons | " + this.nb_requetes_doublons + "\n");
-            fw.write("nombre de requêtes zéro résultat | " + this.nb_requetes_zero_result + "\n");
-            fw.write("nombre de requêtes avec les mêmes conditions | " + this.nb_requetesNbConditions + "\n");
-            fw.write("nombre d’index | " + this.nb_index + "\n");
-            fw.write("temps de lecture des données (ms) | " + this.t_lectureDatas + "\n");
-            fw.write("temps de lecture des requêtes (ms) | " + this.t_lectureQueries + "\n");
-            fw.write("temps création dico (ms) | " + this.t_creationDico + "\n");
-            fw.write("temps de création des index (ms) | " + this.t_creationIndex + "\n");
-            fw.write("temps total d’évaluation du workload (ms) | " + this.t_workloadQueries + "\n");
-            fw.write("temps total (du début à la fin du programme) (ms) | " + this.getTemps_total() + "\n");
+            fw.write("nom du fichier de données , " + this.str_dataPathFile + "\n");
+            fw.write("nom du dossier des requêtes , " + this.str_queryPathFile + "\n");
+            fw.write("nombre de triplets RDF , " + this.nb_tripletRDF + "\n");
+            fw.write("nombre de requêtes , " + this.nb_queries + "\n");
+            fw.write("nombre de requêtes doublons , " + this.nb_requetes_doublons + "\n");
+            fw.write("nombre de requêtes zéro résultat , " + this.nb_requetes_zero_result + "\n");
+            fw.write("nombre de requêtes avec les mêmes conditions , "
+                    + String.valueOf(this.nb_requetesNbConditions).replace(",", " ") + "\n");
+            fw.write("nombre d’index , " + this.nb_index + "\n");
+            fw.write("temps de lecture des données (ms) , " + this.t_lectureDatas + "\n");
+            fw.write("temps de lecture des requêtes (ms) , " + this.t_lectureQueries + "\n");
+            fw.write("temps création dico (ms) , " + this.t_creationDico + "\n");
+            fw.write("temps de création des index (ms) , " + this.t_creationIndex + "\n");
+            fw.write("temps total d’évaluation du workload (ms) , " + this.t_workloadQueries + "\n");
+            fw.write("temps total (du début à la fin du programme) (ms) , " + this.getTemps_total() + "\n");
 
             fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // On enregistre dans l'historique
+        addToHistory();
+
+    }
+
+    /**
+     * Pour garder une trace de toutes les informations, on sauvegarde dans un
+     * fichier historique toutes les infos
+     * 
+     * @param fileName
+     * @throws Exception
+     */
+    public void addToHistory() throws Exception {
+        String path = "output-historique.csv";
+        // LinkedHashMap préserve l'ordre d'insertion des données
+        LinkedHashMap<String, String> datasToExport = new LinkedHashMap<String, String>();
+
+        Boolean isNewFile = false;
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+        try {
+            // On regarde si c'est un nouveau fichier ou non
+            File tempFile = new File(path);
+            if (!tempFile.exists()) {
+                isNewFile = true;
+            }
+            // On met true pour écrire à la suite du fichier, false si reset
+            fw = new FileWriter(path, true);
+            bw = new BufferedWriter(fw);
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            // On place les datas dans le hashMap
+            datasToExport.put("Date",
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(LocalDateTime.now()).toString());
+            datasToExport.put("nom du fichier de données", this.str_dataPathFile);
+            datasToExport.put("nom du dossier des requêtes", this.str_queryPathFile);
+            datasToExport.put("nombre de triplets RDF", String.valueOf(this.nb_tripletRDF));
+            datasToExport.put("nombre de requêtes", String.valueOf(this.nb_queries));
+            datasToExport.put("nombre de requêtes doublons", String.valueOf(this.nb_requetes_doublons));
+            datasToExport.put("nombre de requêtes zéro résultat", String.valueOf(this.nb_requetes_zero_result));
+            datasToExport.put("nombre de requêtes avec les mêmes conditions",
+                    String.valueOf(this.nb_requetesNbConditions).replace(",", " "));
+            datasToExport.put("nombre d’index", String.valueOf(this.nb_index));
+            datasToExport.put("temps de lecture des données (ms)", String.valueOf(this.t_lectureDatas));
+            datasToExport.put("temps de lecture des requêtes (ms)", String.valueOf(this.t_lectureQueries));
+            datasToExport.put("temps création dico (ms)", String.valueOf(this.t_creationDico));
+            datasToExport.put("temps de création des index (ms)", String.valueOf(this.t_creationIndex));
+            datasToExport.put("temps total d’évaluation du workload (ms)", String.valueOf(this.t_workloadQueries));
+            datasToExport.put("temps total (du début à la fin du programme) (ms)",
+                    String.valueOf(this.getTemps_total()));
+
+            // Si on repart d'un fichier vide, on ecrit la première ligne du csv, sion on
+            // passe
+            if (isNewFile) {
+                for (Map.Entry<String, String> mapentry : datasToExport.entrySet()) {
+                    bw.write(mapentry.getKey() + " , ");
+                }
+                bw.newLine();
+            }
+
+            // On ajoute les resultats dans le fichier
+            for (Map.Entry<String, String> mapentry : datasToExport.entrySet()) {
+                bw.write(mapentry.getValue() + " , ");
+            }
+            // On retourne à la ligne
+            bw.newLine();
+            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

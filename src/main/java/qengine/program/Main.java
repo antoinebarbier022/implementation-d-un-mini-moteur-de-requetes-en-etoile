@@ -1,5 +1,7 @@
 package qengine.program;
 
+import java.io.File;
+
 /**
  * 
  * @author Antoine Barbier <antoine.barbier01@etu.umontpellier.fr>
@@ -14,6 +16,15 @@ final class Main {
 	private static void gestionDesOptions(String[] args, DataInformations infos) throws Exception {
 		// Si c'est impaire alors on a pas bien écrit les paramètres
 		if (args.length % 2 != 0) {
+			if (args.length == 1) {
+				if (args[0].equals("clean")) {
+					// On supprime le fichier historique
+					File file = new File("output-historique.csv");
+					file.delete();
+					print(MessageType.LOADED, "Clean", "Le fichier historique 'output-historique.csv' est supprimé !");
+					System.exit(1);
+				}
+			}
 			System.out.println("\n============= Warnings & Errors =============");
 			System.out.println("Les différentes option sont les suivantes :");
 			System.out.println("-queries <queryFile>");

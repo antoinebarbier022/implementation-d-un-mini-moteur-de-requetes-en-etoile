@@ -1,5 +1,6 @@
 package qengine.program;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,13 +133,18 @@ public class Index {
         String filename = "Index.txt";
         String path = outputDir + filename;
 
+        File directory = new File(outputDir);
         FileWriter fw = null;
         try {
+            // création du dossier s'il n'existe pas
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
             fw = new FileWriter(path);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception(ConsoleColor.RED + "Erreur export index : Problème ouverture du fichier : " + filename
-                    + ConsoleColor.RESET);
+            throw new Exception(ConsoleColor.RED + "Erreur export requetes : Problème ouverture du fichier : "
+                    + filename + ConsoleColor.RESET);
         }
         try {
             for (Map.Entry<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> mapentry : indexes

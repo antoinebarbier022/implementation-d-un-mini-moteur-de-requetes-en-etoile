@@ -1,5 +1,6 @@
 package qengine.program;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -58,12 +59,17 @@ public class Dictionnaire {
         String filename = "Dictionnaire.txt";
         String path = outputDir + filename;
 
+        File directory = new File(outputDir);
         FileWriter fw = null;
         try {
+            // création du dossier s'il n'existe pas
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
             fw = new FileWriter(path);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception(ConsoleColor.RED + "Erreur export dictionnaire : Problème ouverture du fichier : "
+            throw new Exception(ConsoleColor.RED + "Erreur export requetes : Problème ouverture du fichier : "
                     + filename + ConsoleColor.RESET);
         }
         try {
