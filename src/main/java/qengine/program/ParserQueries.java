@@ -108,6 +108,10 @@ public class ParserQueries {
         return this.nbQueriesWithZeroResult;
     }
 
+    public HashMap<Integer, Integer> getRequetesNbConditions() {
+        return this.requetesNbConditions;
+    }
+
     /**
      * 
      * @return Temps d'importation de la solution des requêtes
@@ -230,6 +234,8 @@ public class ParserQueries {
         int nbConditionRequete = patterns.size();
         if (requetesNbConditions.containsKey(nbConditionRequete)) {
             requetesNbConditions.put(nbConditionRequete, requetesNbConditions.get(nbConditionRequete) + 1);
+        } else {
+            requetesNbConditions.put(nbConditionRequete, 1);
         }
 
         // Maintenant pour obtenir le resultat final on fait l'intersection des
@@ -278,6 +284,10 @@ public class ParserQueries {
 
     public int getNbRequetesDoublons() {
         return this.numRequetes - this.requetesDistinct.size();
+    }
+
+    public HashMap<Integer, Integer> getHashMapNbConditionsRequete() {
+        return this.requetesNbConditions;
     }
 
     public void export(String outputDir, Dictionnaire dictionnaire) throws Exception {

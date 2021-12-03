@@ -2,6 +2,8 @@ package qengine.program;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /// class qui contient les données sur les temps de calcules, les noms des fichiers ...
 
@@ -32,6 +34,7 @@ public class DataInformations {
     private int nb_index = 0;
     private int nb_requetes_zero_result = 0;
     private int nb_requetes_doublons = 0;
+    private HashMap<Integer, Integer> nb_requetesNbConditions = new HashMap<Integer, Integer>();
 
     // Constructeur
     public DataInformations(String queryFile, String dataFile, String resultFolder) {
@@ -72,6 +75,10 @@ public class DataInformations {
 
     public void setNbRequetesDoublons(int nb) {
         this.nb_requetes_doublons = nb;
+    }
+
+    public void setNbRequetesConditions(HashMap<Integer, Integer> tableau) {
+        this.nb_requetesNbConditions = tableau;
     }
 
     // setters des temps de calcule et lecture
@@ -137,6 +144,11 @@ public class DataInformations {
         System.out.println("Statistiques :");
         System.out.println("\tNB requêtes zero résultat : " + this.nb_requetes_zero_result + "/" + this.nb_queries);
         System.out.println("\tNB de requêtes doublons  : " + this.nb_requetes_doublons + "/" + this.nb_queries);
+        System.out.println("\tNB requêtes avec les mêmes conditions : " + this.nb_requetesNbConditions);
+        for (Map.Entry<Integer, Integer> mapentry : this.nb_requetesNbConditions.entrySet()) {
+            System.out.println("\t - " + mapentry.getValue() + " requêtes avec " + mapentry.getKey() + " condition"
+                    + (mapentry.getKey() == 1 ? "," : "s,"));
+        }
 
         System.out.println();
 
@@ -188,6 +200,7 @@ public class DataInformations {
             fw.write("nombre de requêtes | " + this.nb_queries + "\n");
             fw.write("nombre de requêtes doublons | " + this.nb_requetes_doublons + "\n");
             fw.write("nombre de requêtes zéro résultat | " + this.nb_requetes_zero_result + "\n");
+            fw.write("nombre de requêtes avec les mêmes conditions | " + this.nb_requetesNbConditions);
             fw.write("nombre d’index | " + this.nb_index + "\n");
             fw.write("temps de lecture des données (ms) | " + this.t_lectureDatas + "\n");
             fw.write("temps de lecture des requêtes (ms) | " + this.t_lectureQueries + "\n");

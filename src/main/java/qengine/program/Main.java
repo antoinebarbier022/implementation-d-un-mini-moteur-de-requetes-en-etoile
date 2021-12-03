@@ -93,6 +93,7 @@ final class Main {
 		infos.setTimeLectureQueries(parserQueries.getTempsLecture()); // temps lecture requêtes
 		infos.setTimeWorkloadQueries(parserQueries.getTempsWorkloadQueries()); // temps pour trouvé la solution des
 																				// requêtes
+		infos.setNbRequetesConditions(parserQueries.getHashMapNbConditionsRequete());
 
 		System.out.println();
 		System.out.println("[Exportation des résultats]\t -> en cours");
