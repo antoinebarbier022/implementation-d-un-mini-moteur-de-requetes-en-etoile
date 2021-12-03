@@ -200,7 +200,7 @@ public class DataInformations {
             fw.write("nombre de requêtes | " + this.nb_queries + "\n");
             fw.write("nombre de requêtes doublons | " + this.nb_requetes_doublons + "\n");
             fw.write("nombre de requêtes zéro résultat | " + this.nb_requetes_zero_result + "\n");
-            fw.write("nombre de requêtes avec les mêmes conditions | " + this.nb_requetesNbConditions);
+            fw.write("nombre de requêtes avec les mêmes conditions | " + this.nb_requetesNbConditions + "\n");
             fw.write("nombre d’index | " + this.nb_index + "\n");
             fw.write("temps de lecture des données (ms) | " + this.t_lectureDatas + "\n");
             fw.write("temps de lecture des requêtes (ms) | " + this.t_lectureQueries + "\n");
