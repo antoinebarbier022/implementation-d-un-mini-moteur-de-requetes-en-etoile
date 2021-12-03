@@ -63,15 +63,17 @@ public class Dictionnaire {
             fw = new FileWriter(path);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception("Erreur export dictionnaire : Problème ouverture du fichier : " + filename);
+            throw new Exception(ConsoleColor.RED + "Erreur export dictionnaire : Problème ouverture du fichier : "
+                    + filename + ConsoleColor.RESET);
         }
         try {
             fw.write(this.toString());
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception(
-                    "Erreur export dictionnaire : Problème lors de l'écriture dans le fichier : " + filename);
+            throw new Exception(ConsoleColor.RED +
+                    "Erreur export dictionnaire : Problème lors de l'écriture dans le fichier : " + filename
+                    + ConsoleColor.RESET);
         }
         long endRecordExportDicoTime = System.currentTimeMillis();
         t_export = (int) (endRecordExportDicoTime - startRecordExportDicoTime);

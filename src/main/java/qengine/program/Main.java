@@ -20,8 +20,9 @@ final class Main {
 			System.out.println("-data <dataFile>");
 			System.out.println("-output <restultFolder>");
 			System.out.println();
-			throw new Exception(
-					"Erreur : Vous devez saisir les options de la façon suivante : qengine -queries <queryFile> -data <dataFile> -output <restultFolder> \n");
+			throw new Exception(ConsoleColor.RED +
+					"Erreur : Vous devez saisir les options de la façon suivante : qengine -queries <queryFile> -data <dataFile> -output <restultFolder> \n"
+					+ ConsoleColor.RESET);
 		} else {
 			String queriesFile = "";// workingDir + "sample_query.queryset";
 			String dataFile = ""; // workingDir + "sample_data.nt";
@@ -42,20 +43,21 @@ final class Main {
 							break;
 						default:
 							System.out.println("\n============= Warnings & Errors =============");
-							throw new Exception(
-									"Erreur : Option <" + args[i].replace("-", "") + "> non valide \n");
+							throw new Exception(ConsoleColor.RED +
+									"Erreur : Option <" + args[i].replace("-", "") + "> non valide \n"
+									+ ConsoleColor.RESET);
 					}
 				}
 			}
 			if (queriesFile.isEmpty()) {
 				System.out.println("\n============= Warnings & Errors =============");
-				throw new Exception(
-						"Erreur : Vous devez saisir le fichier de requêtes. \n");
+				throw new Exception(ConsoleColor.RED +
+						"Erreur : Vous devez saisir le fichier de requêtes. \n" + ConsoleColor.RESET);
 			}
 			if (dataFile.isEmpty()) {
 				System.out.println("\n============= Warnings & Errors =============");
-				throw new Exception(
-						"Erreur : Vous devez saisir le fichier de données. \n");
+				throw new Exception(ConsoleColor.RED +
+						"Erreur : Vous devez saisir le fichier de données. \n" + ConsoleColor.RESET);
 			}
 
 			// On regarde si l'ouput est définie, si il ne l'est pas on lui attribue un

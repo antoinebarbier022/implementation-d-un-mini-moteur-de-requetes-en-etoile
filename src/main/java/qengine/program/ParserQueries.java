@@ -82,6 +82,11 @@ public class ParserQueries {
                     queryString.setLength(0); // Reset le buffer de la requête en chaine vide
                 }
             }
+        } catch (Exception e) {
+            throw new Exception(
+                    ConsoleColor.RED
+                            + "Erreur lors de la lecture du fichier de requêtes : " + e
+                            + ConsoleColor.RESET);
         }
 
         long endTotalTime = System.currentTimeMillis();
@@ -307,7 +312,8 @@ public class ParserQueries {
             fw = new FileWriter(path);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception("Erreur export requetes : Problème ouverture du fichier : " + filename);
+            throw new Exception(ConsoleColor.RED + "Erreur export requetes : Problème ouverture du fichier : "
+                    + filename + ConsoleColor.RESET);
         }
         try {
             if (exportToCsv) {
@@ -361,7 +367,9 @@ public class ParserQueries {
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception("Erreur export requetes : Problème lors de l'écriture dans le fichier : " + filename);
+            throw new Exception(ConsoleColor.RED
+                    + "Erreur export requetes : Problème lors de l'écriture dans le fichier : " + filename
+                    + ConsoleColor.RESET);
         }
         long endRecordExportRequestTime = System.currentTimeMillis();
         t_export = (int) (endRecordExportRequestTime - startRecordExportRequestTime);

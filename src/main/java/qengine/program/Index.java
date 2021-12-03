@@ -137,13 +137,12 @@ public class Index {
             fw = new FileWriter(path);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception("Erreur export index : Problème ouverture du fichier : " + filename);
+            throw new Exception(ConsoleColor.RED + "Erreur export index : Problème ouverture du fichier : " + filename
+                    + ConsoleColor.RESET);
         }
         try {
             for (Map.Entry<TypeIndex, HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>> mapentry : indexes
                     .entrySet()) {
-                // System.out.println("Type d'index : " + mapentry.getKey());// + " | valeur: "
-                // + mapentry.getValue());
 
                 for (Map.Entry<Integer, HashMap<Integer, ArrayList<Integer>>> mapentry2 : indexes.get(mapentry.getKey())
                         .entrySet()) {
@@ -168,7 +167,9 @@ public class Index {
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception("Erreur export index : Problème lors de l'écriture dans le fichier : " + filename);
+            throw new Exception(
+                    ConsoleColor.RED + "Erreur export index : Problème lors de l'écriture dans le fichier : " + filename
+                            + ConsoleColor.RESET);
         }
 
         // temps d'export
