@@ -186,6 +186,8 @@ public class DataInformations {
             fw.write("nom du dossier des requêtes | " + this.str_queryPathFile + "\n");
             fw.write("nombre de triplets RDF | " + this.nb_tripletRDF + "\n");
             fw.write("nombre de requêtes | " + this.nb_queries + "\n");
+            fw.write("nombre de requêtes doublons | " + this.nb_requetes_doublons + "\n");
+            fw.write("nombre de requêtes zéro résultat | " + this.nb_requetes_zero_result + "\n");
             fw.write("nombre d’index | " + this.nb_index + "\n");
             fw.write("temps de lecture des données (ms) | " + this.t_lectureDatas + "\n");
             fw.write("temps de lecture des requêtes (ms) | " + this.t_lectureQueries + "\n");
