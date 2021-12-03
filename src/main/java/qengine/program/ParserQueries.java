@@ -28,7 +28,10 @@ public class ParserQueries {
     private HashMap<String, String> requetesDistinct = new HashMap<String, String>(); // utiliser pour connaitre le
                                                                                       // nombre de
     // doublons
-
+    private HashMap<Integer, Integer> requetesNbConditions = new HashMap<Integer, Integer>(); // On s'en sert pour
+                                                                                              // compter le nombre de
+                                                                                              // requetes avec les mêmes
+                                                                                              // nombre de condition
     int numRequetes = 0;
 
     /**
@@ -219,7 +222,15 @@ public class ParserQueries {
             // On passe au pattern suivant
             numPattern++;
         }
+
+        // numéro de la requête
         numRequetes++;
+
+        // Nombre de condition dans la requêtes
+        int nbConditionRequete = patterns.size();
+        if (requetesNbConditions.containsKey(nbConditionRequete)) {
+            requetesNbConditions.put(nbConditionRequete, requetesNbConditions.get(nbConditionRequete) + 1);
+        }
 
         // Maintenant pour obtenir le resultat final on fait l'intersection des
         // résultats des paterns
@@ -270,8 +281,10 @@ public class ParserQueries {
     }
 
     public void export(String outputDir, Dictionnaire dictionnaire) throws Exception {
+        // si on veut veux un fichier csv, sinon fichier texte
+        Boolean exportToCsv = false;
         long startRecordExportRequestTime = System.currentTimeMillis();
-        String filename = "Requetes.txt";
+        String filename = "Requetes" + (exportToCsv ? ".csv" : ".txt");
         String path = outputDir + filename;
 
         File directory = new File(outputDir);
@@ -287,20 +300,51 @@ public class ParserQueries {
             throw new Exception("Erreur export requetes : Problème ouverture du fichier : " + filename);
         }
         try {
-            fw.write(this.toString());
+            if (exportToCsv) {
+                fw.write("Numéro requête , Requête , Nombre de résultats , Résultat(s) \n");
+            }
             for (Map.Entry<Integer, HashMap<String, ArrayList<Integer>>> mapentry : requetesResultats.entrySet()) {
-                fw.write("\n==== Requête n°" + mapentry.getKey() + " =======================\n");
-                // Requete
-                fw.write("\n");
-                fw.write(mapentry.getValue().entrySet().iterator().next().getKey().replace("{", "{\n").replace(" .	",
-                        " .\n	"));
-                fw.write("\n\n");
 
-                fw.write("\n\n");
-                fw.write("Résultats (" + mapentry.getValue().entrySet().iterator().next().getValue().size() + ") \n");
+                // Exportation en fonction du type de fichier voulue
+                if (exportToCsv) {
+                    // numéro de la requête
+                    fw.write(mapentry.getKey().toString());
+                    fw.write(" , ");
+                    // requête
+                    fw.write(mapentry.getValue().entrySet().iterator().next().getKey().replace("{",
+                            "{").replace(" . ", " . "));
+                    fw.write(" , ");
+                    // Nombre de résultat de la requête
+                    Integer nbResult = mapentry.getValue().entrySet().iterator().next().getValue().size();
+                    fw.write(nbResult.toString());
+                    fw.write(" , ");
 
-                for (Integer i : mapentry.getValue().entrySet().iterator().next().getValue()) {
-                    fw.write(" - " + dictionnaire.dico.get(i).toString() + "\n");
+                    // résultat de la requête
+                    fw.write("\"");
+                    for (Integer i : mapentry.getValue().entrySet().iterator().next().getValue()) {
+                        fw.write(dictionnaire.dico.get(i).toString() + "\r\n");
+                    }
+                    fw.write("\"");
+                    fw.write("\n");
+                } else {
+                    // Numéro de la requête
+                    fw.write("\n==== Requête n°" + mapentry.getKey() +
+                            " =======================\n");
+                    // Requête
+                    fw.write("\n");
+                    fw.write(mapentry.getValue().entrySet().iterator().next().getKey().replace(
+                            "{", "{\n").replace(" .	",
+                                    " .\n	"));
+                    fw.write("\n\n");
+
+                    // Résultat de la requête
+                    fw.write("\n\n");
+                    fw.write("Résultats (" +
+                            mapentry.getValue().entrySet().iterator().next().getValue().size() + ") \n");
+
+                    for (Integer i : mapentry.getValue().entrySet().iterator().next().getValue()) {
+                        fw.write(" - " + dictionnaire.dico.get(i).toString() + "\n");
+                    }
                 }
 
             }
