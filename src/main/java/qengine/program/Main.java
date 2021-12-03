@@ -21,16 +21,6 @@ package qengine.program;
  */
 final class Main {
 	static final String baseURI = null;
-
-	// Votre répertoire de travail où vont se trouver les fichiers à lire
-	// static final String workingDir = "data/";
-	// Fichier contenant les requêtes sparql
-	static String queryFile = "";// workingDir + "sample_query.queryset";
-	// Fichier contenant des données rdf
-	static String dataFile = ""; // workingDir + "sample_data.nt";
-	// Fichier contenant le resultat
-	static String resultFile = "";
-
 	// ========================================================================
 
 	/**
@@ -41,16 +31,54 @@ final class Main {
 		DataInformations infos;
 
 		// On passe les différents fichiers en arguments
-		if (args.length < 3) {
+		// Si c'est impaire alors on a pas bien écrit les paramètres
+		if (args.length % 2 != 0) {
 			System.out.println("\n============= Warnings & Errors =============");
+			System.out.println("Les différentes option sont les suivantes :");
+			System.out.println("-queries <queryFile>");
+			System.out.println("-data <dataFile>");
+			System.out.println("-output <restultFolder>");
+			System.out.println();
 			throw new Exception(
-					"Erreur : Vous devez saisir les options de la façon suivante : qengine <queryFile> <dataFile> <restultFolder> ");
+					"Erreur : Vous devez saisir les options de la façon suivante : qengine -queries <queryFile> -data <dataFile> -output <restultFolder> \n");
 		} else {
+			String queriesFile = "";// workingDir + "sample_query.queryset";
+			String dataFile = ""; // workingDir + "sample_data.nt";
+			String resultFolder = "output/";
 			// On place les noms des chemins vers les fichiers
-			// args[0] : chemin queries
-			// args[1] : chemin datas
-			// args[2] : chemin résultats
-			infos = new DataInformations(args[0], args[1], args[2]);
+			for (int i = 0; i < args.length; i++) {
+				// alors c'est le nom de l'option
+				if (i % 2 == 0) {
+					switch (args[i]) {
+						case "-queries":
+							queriesFile = args[i + 1];
+							break;
+						case "-data":
+							dataFile = args[i + 1];
+							break;
+						case "-output":
+							resultFolder = args[i + 1];
+							break;
+
+						default:
+							System.out.println("\n============= Warnings & Errors =============");
+							throw new Exception(
+									"Erreur : Option non valide \n");
+
+					}
+				}
+			}
+			if (queriesFile.isEmpty()) {
+				System.out.println("\n============= Warnings & Errors =============");
+				throw new Exception(
+						"Erreur : Vous devez saisir le fichier de requêtes. \n");
+			}
+			if (dataFile.isEmpty()) {
+				System.out.println("\n============= Warnings & Errors =============");
+				throw new Exception(
+						"Erreur : Vous devez saisir le fichier de données. \n");
+			}
+			infos = new DataInformations(queriesFile, dataFile, resultFolder);
 		}
 
 		System.out.println("\n============= Début =============");
