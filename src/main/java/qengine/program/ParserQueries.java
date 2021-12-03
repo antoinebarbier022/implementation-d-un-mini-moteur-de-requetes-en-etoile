@@ -67,7 +67,13 @@ public class ParserQueries {
                 if (line.trim().endsWith("}")) {
                     ParsedQuery query = sparqlParser.parseQuery(queryString.toString(), null);
 
+                    long startPatternTime = System.currentTimeMillis();
                     processAQuery(query, dictionnaire, index);
+                    long endPatternTime = System.currentTimeMillis();
+
+                    // On ajoute le temps de resolution pour ce pattern
+                    tempsResolutionParPattern.add((int) (endPatternTime - startPatternTime));
+
                     // Traitement de la requête, à adapter/réécrire pour votre programme
 
                     queryString.setLength(0); // Reset le buffer de la requête en chaine vide
@@ -137,7 +143,6 @@ public class ParserQueries {
             Value predicate = pattern.getPredicateVar().getValue();
             Value object = pattern.getObjectVar().getValue();
 
-            long startPatternTime = System.currentTimeMillis();
             try {
 
                 if (subject == null) {
@@ -210,11 +215,6 @@ public class ParserQueries {
                 }
 
             }
-            long endPatternTime = System.currentTimeMillis();
-
-            // On ajoute le temps de resolution pour ce pattern
-            tempsResolutionParPattern.add((int) (endPatternTime - startPatternTime));
-
             // System.out.println(" -> SPO : (" + S + "," + P + "," + O + ",");
             // On passe au pattern suivant
             numPattern++;
