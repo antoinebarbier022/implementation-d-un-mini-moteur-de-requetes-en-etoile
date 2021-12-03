@@ -7,10 +7,21 @@ Git : https://gitlab.com/An_toine/implementation-d-un-mini-moteur-de-requetes-en
 
 Pour lancer le programme, suivre les étapes suivantes:
 
-Options du programme : Vous devez saisir les options de la façon suivante : qengine <queryFile> <dataFile> <restultFolder>
+Options du programme : 
+Soit on utilise l'option seul : ```clean```
+Soit on utilise la combinaison des options suivante :
+```-queries <queryFile>``` : obligatoire
+```-data <dataFile> ``` : obligatoire
+```-output <restultFolder>``` : facultative
+Ainsi, on peut lancer le programme de la façon suivante :
+
+qengine -queries <queryFile> -data <dataFile> -output <restultFolder>
 
 + VsCode : Modifier le fichier ```.vscode/launch.json```, placer les options dans "args" comme dans l'exemple suivant : 
     ```
     "args": "queries/sample_query.queryset data/sample_data.nt output/"
     ```
 + Eclipse : Configurer le RUN, java application > Main, et placer les options dans program arguments. 
+
+
+
