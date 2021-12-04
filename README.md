@@ -19,7 +19,10 @@ Soit on utilise la combinaison des options suivante :
 
 ```-output <restultFolder>``` : facultative
 
-Ainsi, on peut lancer le programme de la façon suivante :
+```-output <type>``` : falcultatif, le type est ```txt``` ou ```csv```
+
+
+Par exemple, on peut lancer le programme de la façon suivante :
 
 ```qengine -queries <queryFile> -data <dataFile> -output <restultFolder>```
 

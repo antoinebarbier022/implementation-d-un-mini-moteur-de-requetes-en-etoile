@@ -9,6 +9,8 @@ import java.io.File;
  */
 final class Main {
 
+	private static boolean exportQueriesToCsv = false;
+
 	enum MessageType {
 		LOADED, LOADING, ERROR, WARNING;
 	};
@@ -54,6 +56,13 @@ final class Main {
 							break;
 						case "-output":
 							resultFolder = args[i + 1];
+							break;
+						case "-type-output":
+							if (args[i + 1].equals("csv")) {
+								exportQueriesToCsv = true;
+							} else {
+								exportQueriesToCsv = false;
+							}
 							break;
 						default:
 							System.out.println("\n============= Warnings & Errors =============");
@@ -177,7 +186,7 @@ final class Main {
 
 		// Exportation des résultats des requêtes
 		print(MessageType.LOADING, "Exportation des requêtes", "en cours ...");
-		parserQueries.export(infos.getResultPathFolder(), dictionnaire); // export requetes
+		parserQueries.export(infos.getResultPathFolder(), dictionnaire, exportQueriesToCsv); // export requetes
 		infos.setTimeExportQueries(parserQueries.getExportTime()); // temps exportations des requêtes
 
 		// Message exportation des résultats des requêtes terminé

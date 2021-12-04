@@ -295,9 +295,8 @@ public class ParserQueries {
         return this.requetesNbConditions;
     }
 
-    public void export(String outputDir, Dictionnaire dictionnaire) throws Exception {
+    public void export(String outputDir, Dictionnaire dictionnaire, Boolean exportToCsv) throws Exception {
         // si on veut veux un fichier csv, sinon fichier texte
-        Boolean exportToCsv = false;
         long startRecordExportRequestTime = System.currentTimeMillis();
         String filename = "Requetes" + (exportToCsv ? ".csv" : ".txt");
         String path = outputDir + filename;
