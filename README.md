@@ -19,7 +19,7 @@ Soit on utilise la combinaison des options suivante :
 
 ```-output <restultFolder>``` : facultative
 
-```-output <type>``` : falcultatif, le type est ```txt``` ou ```csv```
+```-type-output <type>``` : falcultatif, le type est ```txt``` ou ```csv```
 
 
 Par exemple, on peut lancer le programme de la façon suivante :
