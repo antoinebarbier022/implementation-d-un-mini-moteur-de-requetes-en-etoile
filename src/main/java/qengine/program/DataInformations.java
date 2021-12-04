@@ -258,7 +258,7 @@ public class DataInformations {
      * @throws Exception
      */
     public void addToHistory() throws Exception {
-        String path = "output-historique.csv";
+        String path = "output/output-historique.csv";
         // LinkedHashMap préserve l'ordre d'insertion des données
         LinkedHashMap<String, String> datasToExport = new LinkedHashMap<String, String>();
 

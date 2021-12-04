@@ -19,9 +19,12 @@ final class Main {
 			if (args.length == 1) {
 				if (args[0].equals("clean")) {
 					// On supprime le fichier historique
-					File file = new File("output-historique.csv");
-					file.delete();
-					print(MessageType.LOADED, "Clean", "Le fichier historique 'output-historique.csv' est supprimé !");
+					File file = new File("output/output-historique.csv");
+					if (file.exists()) {
+						file.delete();
+						print(MessageType.LOADED, "Clean",
+								"Le fichier historique 'output-historique.csv' est supprimé !");
+					}
 					System.exit(1);
 				}
 			}
@@ -79,7 +82,7 @@ final class Main {
 				String nomDuFichierQueries = queriesFileSplit[queriesFileSplit.length - 1];
 				String nomDuFichierData = dataFileSplit[dataFileSplit.length - 1];
 
-				resultFolder = "output-" + nomDuFichierData.split("\\.")[0] + "-" + nomDuFichierQueries + "/";
+				resultFolder = "output/output-" + nomDuFichierData.split("\\.")[0] + "-" + nomDuFichierQueries + "/";
 			}
 
 			infos.setDataFile(dataFile);
