@@ -24,6 +24,8 @@ public class ParserQueries {
     private int t_export = 0;
     private int nbQueriesWithZeroResult = 0;
     private ArrayList<Integer> tempsResolutionParPattern = new ArrayList<Integer>();
+
+    // num requete, requete et resultat
     private HashMap<Integer, HashMap<String, ArrayList<Integer>>> requetesResultats;
     private HashMap<String, String> requetesDistinct = new HashMap<String, String>(); // utiliser pour connaitre le
                                                                                       // nombre de
