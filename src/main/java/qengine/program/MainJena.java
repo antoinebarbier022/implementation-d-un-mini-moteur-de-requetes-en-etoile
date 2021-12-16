@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -290,8 +290,11 @@ final class MainJena {
 
                 // résultat de la requête
                 fw.write("\"");
+                //
+                String[] tabResultat = mapentry.getValue().entrySet().iterator().next().getValue().split("\n");
+                Arrays.sort(tabResultat);
                 String resultat = mapentry.getValue().entrySet().iterator().next().getValue().replace("\n", "\r\n");
-                fw.write(resultat);
+                fw.write(Arrays.toString(tabResultat));
 
                 fw.write("\"");
                 fw.write("\n");

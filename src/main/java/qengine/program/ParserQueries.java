@@ -3,6 +3,8 @@ package qengine.program;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -300,7 +302,7 @@ public class ParserQueries {
     public void export(String outputDir, Dictionnaire dictionnaire, Boolean exportToCsv) throws Exception {
         // si on veut veux un fichier csv, sinon fichier texte
         long startRecordExportRequestTime = System.currentTimeMillis();
-        String filename = "Requetes" + (exportToCsv ? ".csv" : ".txt");
+        String filename = "project-result" + (exportToCsv ? ".csv" : ".txt");
         String path = outputDir + filename;
 
         File directory = new File(outputDir);
@@ -338,9 +340,23 @@ public class ParserQueries {
 
                     // résultat de la requête
                     fw.write("\"");
+                    int numReponse = 0;
+                    ArrayList<String> tabResultat = new ArrayList<String>();
                     for (Integer i : mapentry.getValue().entrySet().iterator().next().getValue()) {
-                        fw.write(dictionnaire.dico.get(i).toString() + "\r\n");
+
+                        // fw.write(dictionnaire.dico.get(i).toString() + "\r\n");
+                        // On ajoute le resultat dans un tableau
+                        tabResultat.add(dictionnaire.dico.get(i).toString());
+                        // fw.write(dictionnaire.dico.get(i).toString());
+                        // On ne met pas le , à la fin des réponses
+                        if (!nbResult.equals(numReponse)) {
+                            // fw.write(", ");
+                        }
                     }
+                    // On trie le tableau des resultats
+                    Collections.sort(tabResultat);
+                    fw.write(tabResultat.toString());
+
                     fw.write("\"");
                     fw.write("\n");
                 } else {

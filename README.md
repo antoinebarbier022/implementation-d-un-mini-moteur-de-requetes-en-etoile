@@ -11,6 +11,7 @@ Pour lancer le programme, suivre les étapes suivantes:
 
 Options du programme : 
 Soit on utilise l'option seul : ```clean```
+L'option clean permet de supprimer le fichier output-historique.csv
 
 Soit on utilise la combinaison des options suivante :
 ```-queries <queryFile>``` : obligatoire
@@ -19,7 +20,7 @@ Soit on utilise la combinaison des options suivante :
 
 ```-output <restultFolder>``` : facultative
 
-```-type-output <type>``` : falcultatif, le type est ```txt``` ou ```csv```
+```-type-output <type>``` : falcultatif, le type est ```txt``` ou ```csv``` (par défault c'est csv)
 
 
 Par exemple, on peut lancer le programme de la façon suivante :

@@ -9,7 +9,7 @@ import java.io.File;
  */
 final class Main {
 
-	private static boolean exportQueriesToCsv = false;
+	private static boolean exportQueriesToCsv = true;
 
 	enum MessageType {
 		LOADED, LOADING, ERROR, WARNING;
