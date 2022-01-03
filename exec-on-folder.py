@@ -3,6 +3,10 @@ import os, sys, re
 from posixpath import join
 from posix import listdir
 
+print("Pour changer le fichier de données, modifiez le dans le scripte ")
+# fichier donnée à modifier si besoin
+dataFile = 'data/100K.nt'
+
 path = ""
 if len(sys.argv) > 1:
     path = sys.argv[1]
@@ -19,5 +23,5 @@ print("Execution du programme pour les fichiers de requêtes suivants : ")
 for file in os.listdir(path):
     if file.endswith(".queryset"):
         print(file)
-        os.system('/usr/bin/env /Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/bin/java -Xmx4024m -Xms4024m -cp /var/folders/h7/lyvclp_d0c70hx6v7mklwfkh0000gn/T/cp_4lc1qsjfs2nzd8hugppfmullr.jar qengine.program.Main -data data/100K.nt -queries ' + os.path.join(path, file))
+        os.system('java -jar qengine-AntoineBARBIER-DjamelBENAMEUR.jar -data '+ dataFile + ' -type-output csv -queries ' + os.path.join(path, file))
         

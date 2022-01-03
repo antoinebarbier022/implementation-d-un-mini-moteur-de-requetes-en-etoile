@@ -293,7 +293,9 @@ final class MainJena {
                 //
                 String[] tabResultat = mapentry.getValue().entrySet().iterator().next().getValue().split("\n");
                 Arrays.sort(tabResultat);
-                String resultat = mapentry.getValue().entrySet().iterator().next().getValue().replace("\n", "\r\n");
+                // String resultat =
+                // mapentry.getValue().entrySet().iterator().next().getValue().replace("\n",
+                // "\r\n");
                 fw.write(Arrays.toString(tabResultat));
 
                 fw.write("\"");
