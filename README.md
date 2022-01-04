@@ -45,7 +45,7 @@ On peut aussi lancer le programme à partir du code sources avec un IDE.
 
 + VsCode : Modifier le fichier ```.vscode/launch.json```, placer les options dans "args" comme dans l'exemple suivant : 
     ```
-    "args": "queries/sample_query.queryset data/sample_data.nt output/"
+    "args": "-queries queries/sample_query.queryset -data data/sample_data.nt"
     ```
 + Eclipse : Configurer le RUN, java application > Main, et placer les options dans program arguments. 
 

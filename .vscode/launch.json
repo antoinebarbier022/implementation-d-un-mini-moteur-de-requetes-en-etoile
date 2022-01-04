@@ -29,7 +29,7 @@
             "mainClass": "qengine.program.Main",
             "projectName": "qengine",
             "vmArgs": "-Xmx4024m -Xms4024m",
-            "args": "-data data/100K.nt -queries queries/STAR_ALL_workload.queryset -type-output csv"
+            "args": "-queries queries/STAR_ALL_workload.queryset -data data/2000K.rdf -type-output csv"
         }
     ]
 }
